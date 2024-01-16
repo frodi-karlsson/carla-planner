@@ -1,0 +1,7 @@
+{
+  "name": "carla-planner",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
