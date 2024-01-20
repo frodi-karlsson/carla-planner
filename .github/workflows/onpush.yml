@@ -16,10 +16,6 @@ jobs:
           node-version: 20.x
       - run: |
           corepack enable
-      - name: Setup yarn
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: install
       
       - name: Set yarn node resolution to node-modules
         run: |
@@ -28,6 +24,11 @@ jobs:
       - name: Set yarn npm registry
         run: |
           yarn config set npmRegistryServer "https://registry.npmjs.org"
+
+      - name: Setup yarn
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: install
 
       - name: Run unit tests
         uses: borales/actions-yarn@v4.2.0
