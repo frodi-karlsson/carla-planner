@@ -27,6 +27,10 @@ yarn
 yarn serve
 ```
 
-## Build
+## Build electron app
 
 ```bash
+yarn electron:pack
+```
+
+For more granularity, you can get familiar with capacitor and @capacitor-community/electron.
