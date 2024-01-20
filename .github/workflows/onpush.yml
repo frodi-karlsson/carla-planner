@@ -14,13 +14,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20.x
-
+      - run: |
+          corepack enable
       - name: Setup yarn
-        uses: borales/actions-yarn@v4
+        uses: borales/actions-yarn@v4.2.0
         with:
           cmd: install
 
       - name: Run unit tests
-        uses: borales/actions-yarn@v4
+        uses: borales/actions-yarn@v4.2.0
         with:
           cmd: test.unit
