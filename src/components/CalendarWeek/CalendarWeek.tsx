@@ -11,7 +11,7 @@ const CalendarWeek: React.FC = () => {
 
 	useEffect(() => {
 		timeOut = setTimeout(() => {
-			const morningHour = 8
+			const morningHour = 7
 			const ticks = document.getElementsByClassName('CalendarWeek__content__timeTicks__tick')
 			const tick = ticks?.[morningHour - 1] as HTMLElement | undefined
 			if (tick) {

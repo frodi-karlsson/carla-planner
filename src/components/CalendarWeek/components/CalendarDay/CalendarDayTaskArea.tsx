@@ -1,12 +1,17 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import './CalendarDayTaskArea.scss'
 import {type Task} from '@/types/Task'
 import {TimeUnit} from '@/util/TimeUnit'
 import TaskElem from './TaskElem'
 import {useDrop} from 'react-dnd'
 import {minuteHeight} from '../../util/constants'
+import {useStorage} from '@capacitor-community/storage-react'
+import {taskUtil} from '../../../../util/TaskUtils'
 
 const CalendarDayTaskArea: React.FC = () => {
+	const {set, get} = useStorage()
+	const [tasks, _setTasks] = useState<Task[]>([])
+
 	const testTasks: Task[] = [
 		{
 			id: '1',
@@ -41,18 +46,51 @@ const CalendarDayTaskArea: React.FC = () => {
 			color: 'rgba(255, 255, 80, 0.9)',
 		},
 	]
-	const [tasks, _setTasks] = useState(testTasks)
 
-	const setTasks = (tasks: Task[]) => {
+	const getDbTasks: () => Promise<Task[]> = async () => {
+		const tasks = await get('tasks')
+		console.log('tasks in getDbTasks: ', tasks)
+		if (tasks) {
+			return taskUtil.fromJson(tasks)
+		}
+
+		return []
+	}
+
+	const setTasks: (tasks: Task[]) => Promise<void> = async (tasks: Task[]) => {
 		tasks.sort((a, b) => a.start.minutes - b.start.minutes)
 		_setTasks([...tasks])
+		await set('tasks', taskUtil.toJson(tasks)).catch(err => {
+			console.error(err)
+		}).then(() => {
+			console.log('tasks saved')
+		})
 	}
+
+	useEffect(() => {
+		let _tasks: Task[] = []
+
+		void getDbTasks().then(async tasks => {
+			if (tasks.length > 0) {
+				_tasks = tasks
+			} else {
+				_tasks = testTasks
+			}
+
+			console.log('tasks from getDbTasks: ', tasks)
+			console.log('final tasks: ', _tasks)
+
+			await setTasks(_tasks)
+		}).catch(err => {
+			console.error(err)
+		})
+	}, [])
 
 	const handleTaskDrop = (taskId: string, deltaTimeUnit: TimeUnit) => {
 		const task = tasks.find(t => t.id === taskId)
 		if (task) {
 			task.start = task.start.add(deltaTimeUnit)
-			setTasks([...tasks])
+			void setTasks([...tasks])
 		}
 	}
 
@@ -68,7 +106,7 @@ const CalendarDayTaskArea: React.FC = () => {
 			const deltaTimeUnit = new TimeUnit(0, delta / minuteHeight)
 			handleTaskDrop(item.id, deltaTimeUnit)
 		},
-	}))
+	}), [tasks])
 
 	const getNumberOfTasksWithSameStart = (task: Task, index: number): number => {
 		const {start} = task

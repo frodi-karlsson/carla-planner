@@ -13,3 +13,8 @@ export type Task = {
 	length: TimeUnitType;
 	color: string;
 }
+
+export type TaskJsonObj = Omit<Task, 'start' | 'length'> & {
+	start: number;
+	length: number;
+}
