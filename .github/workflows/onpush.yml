@@ -6,10 +6,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Setup Yarn
         uses: ./.github/workflows/setup-yarn.yml
-        with:
-          ref: ${{ github.ref }}
       - name: Run unit tests
         uses: borales/actions-yarn@v4.2.0
         with:
