@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {type Task} from '@/types/Task'
 import './TaskElem.scss'
-import {minuteHeight} from '../constants'
+import {minuteHeight} from '../../util/constants'
 import {IonChip, IonHeader, IonIcon, IonModal, IonText, IonTitle} from '@ionic/react'
 import {closeOutline} from 'ionicons/icons'
 import {useDrag} from 'react-dnd'

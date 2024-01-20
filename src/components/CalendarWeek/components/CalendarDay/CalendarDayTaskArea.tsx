@@ -2,9 +2,9 @@ import React, {useState} from 'react'
 import './CalendarDayTaskArea.scss'
 import {type Task} from '@/types/Task'
 import {TimeUnit} from '@/util/TimeUnit'
-import TaskElem from './components/TaskElem'
+import TaskElem from './TaskElem'
 import {useDrop} from 'react-dnd'
-import {minuteHeight} from './constants'
+import {minuteHeight} from '../../util/constants'
 
 const CalendarDayTaskArea: React.FC = () => {
 	const testTasks: Task[] = [
