@@ -19,8 +19,8 @@ jobs:
         run: yarn cap update
       - name: Capacitor copy
         run: yarn cap copy
-      - name: Capacitor build
-        run: yarn cap build
+      - name: Capacitor build electron
+        run: yarn cap build electron
       # Leave this at this for now since we aren't interested in a release yet
       # Later, we will add auto commit and push to a release branch
         
