@@ -1413,17 +1413,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor-community/storage-react@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@capacitor-community/storage-react@npm:0.1.0"
-  peerDependencies:
-    "@capacitor/core": ">=3.0.0"
-    "@capacitor/storage": "*"
-    react: "*"
-  checksum: 01e055d1218f2bf7b4934d5c60c3ad59dfd3c02d80edf014f3549973f8dcde4bb1adde71653ad0616f3886eea289620b53f1fec87bffcd8afd07bfa1af12ba0f
-  languageName: node
-  linkType: hard
-
 "@capacitor/app@npm:5.0.6":
   version: 5.0.6
   resolution: "@capacitor/app@npm:5.0.6"
@@ -1512,15 +1501,6 @@ __metadata:
   peerDependencies:
     "@capacitor/core": ^5.0.0
   checksum: 7e5fb9fe809a2f4dbf551eace548bb0c723bbe31c7c1ef8e62a5346a5ca486ff72dca87ee572255fdf08d48eb3195a1b058dd26139e931e197def63e34385c6e
-  languageName: node
-  linkType: hard
-
-"@capacitor/storage@npm:^1.2.5":
-  version: 1.2.5
-  resolution: "@capacitor/storage@npm:1.2.5"
-  peerDependencies:
-    "@capacitor/core": ^3.0.0
-  checksum: 671aaacd5a7dcc38fa21e0c181fb3ddbb31d35cf8383d7e0d9da96ff58604186bc9e8f8f3e35ede1253ee70f766bd61177adc757d28ebc775148fc40bf5395c5
   languageName: node
   linkType: hard
 
@@ -3952,7 +3932,6 @@ __metadata:
   resolution: "carla-planner@workspace:."
   dependencies:
     "@capacitor-community/electron": "npm:^5.0.1"
-    "@capacitor-community/storage-react": "npm:^0.1.0"
     "@capacitor/app": "npm:5.0.6"
     "@capacitor/cli": "npm:5.6.0"
     "@capacitor/core": "npm:5.6.0"
@@ -3961,7 +3940,6 @@ __metadata:
     "@capacitor/keyboard": "npm:5.0.7"
     "@capacitor/preferences": "npm:^5.0.6"
     "@capacitor/status-bar": "npm:5.0.6"
-    "@capacitor/storage": "npm:^1.2.5"
     "@ionic/cli": "npm:^7.2.0"
     "@ionic/pwa-elements": "npm:^3.2.2"
     "@ionic/react": "npm:^7.0.0"

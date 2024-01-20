@@ -5,11 +5,12 @@ import {TimeUnit} from '@/util/TimeUnit'
 import TaskElem from './TaskElem'
 import {useDrop} from 'react-dnd'
 import {minuteHeight} from '../../util/constants'
-import {useStorage} from '@capacitor-community/storage-react'
+import {Preferences} from '@capacitor/preferences'
 import {taskUtil} from '../../../../util/TaskUtils'
 
+const {get, set} = Preferences
+
 const CalendarDayTaskArea: React.FC = () => {
-	const {set, get} = useStorage()
 	const [tasks, _setTasks] = useState<Task[]>([])
 
 	const testTasks: Task[] = [
@@ -48,7 +49,11 @@ const CalendarDayTaskArea: React.FC = () => {
 	]
 
 	const getDbTasks: () => Promise<Task[]> = async () => {
-		const tasks = await get('tasks')
+		const tasks = await get({
+			key: 'tasks',
+		}).then(res => res.value).catch(err => {
+			console.error(err)
+		})
 		console.log('tasks in getDbTasks: ', tasks)
 		if (tasks) {
 			return taskUtil.fromJson(tasks)
@@ -60,7 +65,10 @@ const CalendarDayTaskArea: React.FC = () => {
 	const setTasks: (tasks: Task[]) => Promise<void> = async (tasks: Task[]) => {
 		tasks.sort((a, b) => a.start.minutes - b.start.minutes)
 		_setTasks([...tasks])
-		await set('tasks', taskUtil.toJson(tasks)).catch(err => {
+		await set({
+			key: 'tasks',
+			value: taskUtil.toJson(tasks),
+		}).catch(err => {
 			console.error(err)
 		}).then(() => {
 			console.log('tasks saved')
