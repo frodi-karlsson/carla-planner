@@ -3,16 +3,21 @@ name: Run unit tests on push to main
 on: [push]
 
 jobs:
-  setup-yarn:
-    uses: ./.github/workflows/setup-yarn.yml
-    with:
-      workflows-ref: ./.github/workflows/onpush.yml
   test:
+    description: Run tests
     needs: setup-yarn
     runs-on: ubuntu-latest
 
     steps:
+      - name: Setup Yarn
+        uses: ./.github/workflows/setup-yarn.yml
+        with:
+          isMain: true
       - name: Run unit tests
         uses: borales/actions-yarn@v4.2.0
         with:
           cmd: test.unit
+      - name: Run e2e tests
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: test.e2e

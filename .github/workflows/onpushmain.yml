@@ -6,13 +6,13 @@ on:
       - main
 
 jobs:
-  setup-yarn:
-    uses: ./.github/workflows/setup-yarn.yml
-    with:
-      workflows-ref: ./.github/workflows/onpushmain.yml
   build:
-    needs: setup-yarn
+    description: Build electron app
     runs-on: ubuntu-latest
+      - name: Setup Yarn
+        uses: frodi-karlsson/carla-planner/.github/workflows/setup-yarn.yml@main
+        with:
+          isMain: true
       - name: Sync capacitor
         uses: borales/actions-yarn@v4.2.0
         with:

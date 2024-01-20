@@ -1,35 +1,32 @@
 name: Setup Yarn
+description: Setup Yarn for use in other jobs
+inputs:
+  isMain:
+    description: 'Is this the main branch?'
+    required: true
+    default: false
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-on: [workflow_call]
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+    - run: |
+        corepack enable
+    
+    - name: Set yarn node resolution to node-modules
+      run: |
+        yarn config set nodeLinker node-modules
 
-jobs:
-  setup-yarn:
-    runs-on: ubuntu-latest
-    inputs:
-      workflows-ref:
-          description: "ref of the centralized workflows repo that was specified in 'jobs.<name>.uses'"
-          required: true
-          type: string
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Set yarn npm registry
+      run: |
+        yarn config set npmRegistryServer "https://registry.npmjs.org"
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20.x
-      - run: |
-          corepack enable
-      
-      - name: Set yarn node resolution to node-modules
-        run: |
-          yarn config set nodeLinker node-modules
-
-      - name: Set yarn npm registry
-        run: |
-          yarn config set npmRegistryServer "https://registry.npmjs.org"
-
-      - name: Install dependencies
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: install
+    - name: Install dependencies
+      uses: borales/actions-yarn@v4.2.0
+      with:
+        cmd: install
