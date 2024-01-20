@@ -5,11 +5,18 @@ inputs:
     description: 'Is this the main branch?'
     required: true
     default: false
+  ref:
+    description: 'The ref to checkout'
+    required: false
+    default: ${{ github.ref }}
 runs:
   using: "composite"
   steps:
     - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        repository: frodi-karlsson/carla-planner
+        path: carla-planner
 
     - name: Setup Node.js
       uses: actions/setup-node@v3

@@ -13,6 +13,7 @@ jobs:
         uses: frodi-karlsson/carla-planner/.github/workflows/setup-yarn.yml@main
         with:
           isMain: true
+          ref: ${{ github.ref }}
       - name: Sync capacitor
         uses: borales/actions-yarn@v4.2.0
         with:

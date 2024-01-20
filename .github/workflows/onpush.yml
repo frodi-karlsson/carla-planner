@@ -1,4 +1,4 @@
-name: Run unit tests on push to main
+name: Run unit tests on push
 
 on: [push]
 
@@ -9,7 +9,7 @@ jobs:
       - name: Setup Yarn
         uses: ./.github/workflows/setup-yarn.yml
         with:
-          isMain: true
+          ref: ${{ github.ref }}
       - name: Run unit tests
         uses: borales/actions-yarn@v4.2.0
         with:
