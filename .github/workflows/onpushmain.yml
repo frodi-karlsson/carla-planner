@@ -18,7 +18,7 @@ jobs:
       - name: Sync capacitor
         run: yarn sync
       - name: Add electron app
-        run: capacitor add electron
+        run: cap add electron
       - name: Build electron app
         run: yarn electron
 
