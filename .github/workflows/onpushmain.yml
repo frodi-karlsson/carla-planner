@@ -13,6 +13,10 @@ jobs:
         uses: frodi-karlsson/carla-planner/.github/actions/setup-yarn@main
         with:
           isMain: true
+      - name: Build web app
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: build
       - name: Sync capacitor
         uses: borales/actions-yarn@v4.2.0
         with:
