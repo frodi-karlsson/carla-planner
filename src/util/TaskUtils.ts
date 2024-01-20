@@ -12,7 +12,6 @@ export const taskUtil = {
 				start,
 				length,
 			}
-			console.log('ret', ret)
 			return ret
 		})
 

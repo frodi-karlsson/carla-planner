@@ -29,6 +29,7 @@ import '@ionic/react/css/display.css'
 import './theme/variables.scss'
 import {DndProvider} from 'react-dnd'
 import {HTML5Backend} from 'react-dnd-html5-backend'
+import MainView from './pages/MainView/MainView'
 
 setupIonicReact()
 
@@ -36,15 +37,12 @@ const App: React.FC = () => (
 	<IonApp>
 		<IonReactRouter>
 			<IonRouterOutlet>
-				<Route exact path='/tab1'>
+				<Route exact path='/'>
 					<DndProvider
 						backend={HTML5Backend}
 					>
-						<Tab1 />
+						<MainView />
 					</DndProvider>
-				</Route>
-				<Route exact path='/'>
-					<Redirect to='/tab1' />
 				</Route>
 			</IonRouterOutlet>
 		</IonReactRouter>

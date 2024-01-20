@@ -54,7 +54,6 @@ const CalendarDayTaskArea: React.FC = () => {
 		}).then(res => res.value).catch(err => {
 			console.error(err)
 		})
-		console.log('tasks in getDbTasks: ', tasks)
 		if (tasks) {
 			return taskUtil.fromJson(tasks)
 		}
@@ -70,8 +69,6 @@ const CalendarDayTaskArea: React.FC = () => {
 			value: taskUtil.toJson(tasks),
 		}).catch(err => {
 			console.error(err)
-		}).then(() => {
-			console.log('tasks saved')
 		})
 	}
 
@@ -84,9 +81,6 @@ const CalendarDayTaskArea: React.FC = () => {
 			} else {
 				_tasks = testTasks
 			}
-
-			console.log('tasks from getDbTasks: ', tasks)
-			console.log('final tasks: ', _tasks)
 
 			await setTasks(_tasks)
 		}).catch(err => {

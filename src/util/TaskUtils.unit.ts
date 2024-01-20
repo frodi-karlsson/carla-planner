@@ -16,8 +16,6 @@ describe('TaskUtils', () => {
 		const json = taskUtil.toJson([task])
 		const tasks = taskUtil.fromJson(json)
 
-		console.log('tasks', tasks)
-
 		expect(tasks[0]).toEqual(task)
 		expect(tasks[0].start).toEqual(task.start)
 		expect(tasks[0].length).toEqual(task.length)

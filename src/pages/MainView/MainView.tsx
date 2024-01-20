@@ -1,13 +1,13 @@
 import React from 'react'
+import './MainView.scss'
 import {
 	IonPage,
 } from '@ionic/react'
-import './Tab1.scss'
 import CalendarWeek from '@/components/CalendarWeek/CalendarWeek'
 
-const Tab1: React.FC = () => (
-	<IonPage className='Tab1'>
-		<div className='Tab1__content'>
+const MainView: React.FC = () => (
+	<IonPage className='MainView'>
+		<div className='MainView__content'>
 			{
 				<CalendarWeek />
 			}
@@ -15,4 +15,4 @@ const Tab1: React.FC = () => (
 	</IonPage>
 )
 
-export default Tab1
+export default MainView
