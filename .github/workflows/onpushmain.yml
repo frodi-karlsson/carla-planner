@@ -1,9 +1,9 @@
-name: Run unit tests on push to main
+name: Build electron app on push to main
 
 on: [push]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,7 +30,13 @@ jobs:
         with:
           cmd: install
 
-      - name: Run unit tests
+      - name: Sync capacitor
         uses: borales/actions-yarn@v4.2.0
         with:
-          cmd: test.unit
+          cmd: sync
+
+      - name: Build electron app
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: electron
+
