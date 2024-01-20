@@ -1,0 +1,42 @@
+name: Setup Yarn
+
+on: [workflow_call]
+
+jobs:
+  setup-yarn:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+      - run: |
+          corepack enable
+      
+      - name: Set yarn node resolution to node-modules
+        run: |
+          yarn config set nodeLinker node-modules
+
+      - name: Set yarn npm registry
+        run: |
+          yarn config set npmRegistryServer "https://registry.npmjs.org"
+
+      - name: Setup yarn
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: install
+
+      - name: Sync capacitor
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: sync
+
+      - name: Build electron app
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: electron
+
