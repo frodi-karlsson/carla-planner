@@ -6,6 +6,7 @@ jobs:
   setup-yarn:
     uses: ./.github/workflows/setup-yarn.yml
   test:
+    needs: setup-yarn
     runs-on: ubuntu-latest
 
     steps:

@@ -6,6 +6,7 @@ jobs:
   setup-yarn:
     uses: ./.github/workflows/setup-yarn.yml
   build:
+    needs: setup-yarn
     runs-on: ubuntu-latest
       - name: Sync capacitor
         uses: borales/actions-yarn@v4.2.0
