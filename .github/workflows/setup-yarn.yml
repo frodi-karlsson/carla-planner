@@ -5,6 +5,11 @@ on: [workflow_call]
 jobs:
   setup-yarn:
     runs-on: ubuntu-latest
+    inputs:
+      workflows-ref:
+          description: "ref of the centralized workflows repo that was specified in 'jobs.<name>.uses'"
+          required: true
+          type: string
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

@@ -8,6 +8,8 @@ on:
 jobs:
   setup-yarn:
     uses: ./.github/workflows/setup-yarn.yml
+    with:
+      workflows-ref: ./.github/workflows/onpushmain.yml
   build:
     needs: setup-yarn
     runs-on: ubuntu-latest

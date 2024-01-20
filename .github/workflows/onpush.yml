@@ -5,6 +5,8 @@ on: [push]
 jobs:
   setup-yarn:
     uses: ./.github/workflows/setup-yarn.yml
+    with:
+      workflows-ref: ./.github/workflows/onpush.yml
   test:
     needs: setup-yarn
     runs-on: ubuntu-latest
