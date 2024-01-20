@@ -9,7 +9,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Setup Yarn
-        uses: ./.github/workflows/setup-yarn.yml
+        uses: actions/setup-yarn@v1
       - name: Run unit tests
         uses: borales/actions-yarn@v4.2.0
         with:
