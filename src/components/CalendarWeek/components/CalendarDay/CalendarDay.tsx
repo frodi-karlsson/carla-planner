@@ -1,7 +1,7 @@
 import React from 'react'
 import './CalendarDay.scss'
 import {IonCard} from '@ionic/react'
-import CalendarDayTaskArea from './components/CalendarDayTaskArea/CalendarDayTaskArea'
+import CalendarDayTaskArea from './CalendarDayTaskArea'
 
 const CalendarDay: React.FC = () => (
 	<div
