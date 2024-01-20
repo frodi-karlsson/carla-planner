@@ -9,7 +9,8 @@
     "start": "vite",
     "build": "ionic build",
     "sync": "cap sync",
-    "electron": "ionic cap open electron",
+    "electron:add": "ionic cap add electron",
+    "electron:open": "ionic cap open electron",
     "test.unit": "vitest",
     "lint": "eslint",
     "lint.fix": "eslint --fix"

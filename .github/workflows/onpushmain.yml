@@ -18,7 +18,11 @@ jobs:
       - name: Sync capacitor
         run: yarn sync
       - name: Add electron app
-        run: ionic cap add electron
-      - name: Build electron app
-        run: yarn electron
+        run: yarn electron:add
+      - name: Check for electron folder
+        run: |
+          if [ ! -d "electron" ]; then
+            echo "Electron folder not found"
+            exit 1
+          fi
 
