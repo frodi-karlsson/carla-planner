@@ -20,6 +20,10 @@ jobs:
         uses: borales/actions-yarn@v4.2.0
         with:
           cmd: install
+      
+      - name: Set yarn node resolution to node-modules
+        run: |
+          yarn config set nodeLinker node-modules
 
       - name: Run unit tests
         uses: borales/actions-yarn@v4.2.0
