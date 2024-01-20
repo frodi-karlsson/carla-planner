@@ -14,15 +14,9 @@ jobs:
         with:
           isMain: true
       - name: Build web app
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: build
+        run: yarn build
       - name: Sync capacitor
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: sync
+        run: yarn sync
       - name: Build electron app
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: electron
+        run: yarn electron
 
