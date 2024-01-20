@@ -37,9 +37,15 @@ describe('TimeUnit', () => {
 		expect(timeUnit.timeString).toBe('13:30')
 	})
 
-	test('add works correctly', () => {
+	test('add works correctly with positive', () => {
 		const timeUnit = new TimeUnit(1, 30)
 		const timeUnit2 = new TimeUnit(1, 30)
 		expect(timeUnit.add(timeUnit2).minutes).toBe(180)
+	})
+
+	test('add works correctly with negative', () => {
+		const timeUnit = new TimeUnit(1, 30)
+		const timeUnit2 = new TimeUnit(-1, -40)
+		expect(timeUnit.add(timeUnit2).minutes).toBe(-10)
 	})
 })

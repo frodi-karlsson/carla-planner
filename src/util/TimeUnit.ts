@@ -35,11 +35,11 @@ export class TimeUnit implements TimeUnitType {
 	}
 
 	getFromMinutes(minutes: number) {
-		return Math.max(Math.round(minutes / 5) * 5, 5)
+		return Math.round(minutes / 5) * 5
 	}
 
 	getFromHourMinutes(hour: number, minutes: number) {
-		return Math.max(Math.round(((hour * 60) + minutes) / 5) * 5, 5)
+		return Math.round(((hour * 60) + minutes) / 5) * 5
 	}
 
 	/**

@@ -4,15 +4,23 @@ import './TaskElem.scss'
 import {minuteHeight} from '../constants'
 import {IonChip, IonHeader, IonIcon, IonModal, IonText, IonTitle} from '@ionic/react'
 import {closeOutline} from 'ionicons/icons'
+import {useDrag} from 'react-dnd'
+import {type TimeUnit} from '@/util/TimeUnit'
 
 type TaskElemProps = {
 	task: Task;
 	widthModifier: number;
 	left: string;
 	zIndex?: number;
+	isDragging?: boolean;
 }
 
-const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left}) => {
+const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left, isDragging}) => {
+	const [_, drag] = useDrag(() => ({
+		type: 'Task',
+		item: task,
+	}))
+
 	const taskHeight = Math.max((task.length.minutes * minuteHeight), 30 * minuteHeight) + 'px'
 	const [showModal, setShowModal] = useState(false)
 
@@ -22,6 +30,7 @@ const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left}) 
 
 	return (
 		<div
+			ref={drag}
 			className='Task'
 			style={{
 				backgroundColor: task.color,

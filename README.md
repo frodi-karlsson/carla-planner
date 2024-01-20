@@ -15,6 +15,8 @@ Then you can schedule your day by drag-and-dropping these events into a calendar
 
 ## Installation
 
+You should probably be using yarn 4.0.2 as specified in `package.json.packageManager`.
+
 ```bash
 yarn
 ```
