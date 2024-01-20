@@ -1,0 +1,6 @@
+@import "src/theme/global.scss";
+.CalendarDay {
+  position: relative;
+  width: $dayWidth;
+  z-index: -100;
+}

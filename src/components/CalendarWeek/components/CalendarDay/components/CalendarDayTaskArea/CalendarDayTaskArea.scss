@@ -1,0 +1,6 @@
+@import "src/theme/global.scss";
+.CalendarDayTaskArea {
+  height: calc($hourHeight * 24);
+  position: relative;
+  width: $dayWidth;
+}
