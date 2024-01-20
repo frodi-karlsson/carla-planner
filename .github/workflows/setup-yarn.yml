@@ -24,18 +24,7 @@ jobs:
         run: |
           yarn config set npmRegistryServer "https://registry.npmjs.org"
 
-      - name: Setup yarn
+      - name: Install dependencies
         uses: borales/actions-yarn@v4.2.0
         with:
           cmd: install
-
-      - name: Sync capacitor
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: sync
-
-      - name: Build electron app
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: electron
-
