@@ -15,14 +15,13 @@ jobs:
           isMain: true
       - name: Build web app
         run: yarn build
-      - name: Sync capacitor
-        run: yarn sync
-      - name: Add electron app
-        run: yarn electron:add
-      - name: Check for electron folder
-        run: |
-          if [ ! -d "electron" ]; then
-            echo "Electron folder not found"
-            exit 1
-          fi
+      - name: Update capacitor
+        run: yarn cap update
+      - name: Capacitor copy
+        run: yarn cap copy
+      - name: Capacitor build
+        run: yarn cap build
+      # Leave this at this for now since we aren't interested in a release yet
+      # Later, we will add auto commit and push to a release branch
+        
 
