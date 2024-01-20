@@ -6,6 +6,7 @@
   "scripts": {
     "test.e2e": "cypress run",
     "serve": "ionic serve",
+    "start": "vite",
     "build": "ionic build",
     "sync": "cap sync",
     "electron": "ionic cap open electron",
