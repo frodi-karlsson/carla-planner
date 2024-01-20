@@ -14,13 +14,7 @@ jobs:
         with:
           isMain: true
       - name: Build web app
-        run: yarn build
-      - name: Update capacitor
-        run: yarn cap update
-      - name: Capacitor copy
-        run: yarn cap copy
-      - name: Capacitor build electron
-        run: cd electron && yarn build
+        run: yarn electron:pack
       # Leave this at this for now since we aren't interested in a release yet
       # Later, we will add auto commit and push to a release branch
         

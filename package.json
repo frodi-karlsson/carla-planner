@@ -8,9 +8,12 @@
     "serve": "ionic serve",
     "start": "vite",
     "build": "ionic build",
-    "sync": "cap sync",
+    "sync": "ionic cap sync",
     "electron:add": "ionic cap add electron",
     "electron:open": "ionic cap open electron",
+    "electron:prepare": "npm run build && ionic cap update electron && ionic cap copy electron",
+    "electron:build": "npm run electron:prepare && cd electron && npm run build && cd ..",
+    "electron:pack": "npm run electron:build && cd electron && npm run electron:pack && cd ..",
     "test.unit": "vitest",
     "lint": "eslint",
     "lint.fix": "eslint --fix"

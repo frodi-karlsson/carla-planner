@@ -29,5 +29,4 @@ yarn serve
 
 ## Build
 
-I haven't actually tried building this yet, but it will be an electron app using capacitor.
-If you're trying to build this for some reason, good luck!
+```bash
