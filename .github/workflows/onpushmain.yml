@@ -7,8 +7,8 @@ on:
 
 jobs:
   build:
-    description: Build electron app
     runs-on: ubuntu-latest
+    steps:
       - name: Setup Yarn
         uses: frodi-karlsson/carla-planner/.github/workflows/setup-yarn.yml@main
         with:

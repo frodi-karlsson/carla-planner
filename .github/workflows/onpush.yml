@@ -4,10 +4,7 @@ on: [push]
 
 jobs:
   test:
-    description: Run tests
-    needs: setup-yarn
     runs-on: ubuntu-latest
-
     steps:
       - name: Setup Yarn
         uses: ./.github/workflows/setup-yarn.yml
