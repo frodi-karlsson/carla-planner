@@ -26,4 +26,20 @@ describe('TimeUnit', () => {
 		const timeUnit = new TimeUnit(10, 0)
 		expect(timeUnit.minutes).toBe(600)
 	})
+
+	test('timeString returns correct value for < 12', () => {
+		const timeUnit = new TimeUnit(1, 30)
+		expect(timeUnit.timeString).toBe('1:30')
+	})
+
+	test('timeString returns correct value for > 12', () => {
+		const timeUnit = new TimeUnit(13, 30)
+		expect(timeUnit.timeString).toBe('13:30')
+	})
+
+	test('add works correctly', () => {
+		const timeUnit = new TimeUnit(1, 30)
+		const timeUnit2 = new TimeUnit(1, 30)
+		expect(timeUnit.add(timeUnit2).minutes).toBe(180)
+	})
 })

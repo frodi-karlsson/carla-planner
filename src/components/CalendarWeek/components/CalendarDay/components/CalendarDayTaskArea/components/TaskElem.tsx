@@ -35,11 +35,15 @@ const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left}) 
 			<div className='Task__small' onClick={() => {
 				setShowModal(true)
 			}}>
-				<div className='Task__title'>
+				<div className='Task__small__title'>
 					{task.title}
 				</div>
-				{task.description && Number(taskHeight.split('px')[0]) / minuteHeight > 30
-				&& <div className='Task__description'>
+
+				<div className='Task__small__time'>
+					{task.start.timeString} - {(task.start.add(task.length)).timeString}
+				</div>
+				{task.description && Number(taskHeight.split('px')[0]) / minuteHeight > 30 && widthModifier <= 1
+				&& <div className='Task__small__description'>
 					{task.description}
 				</div>}
 			</div>
@@ -69,6 +73,9 @@ const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left}) 
 				<div className='Task__modal__content' onClick={() => {
 					setShowModal(true)
 				}}>
+					<IonChip className='Task__modal__content__time' color='white'>
+						{task.start.timeString} - {(task.start.add(task.length)).timeString}
+					</IonChip>
 					<IonText className='Task__modal__content__description' color='white'>
 						{task.description}
 					</IonText>

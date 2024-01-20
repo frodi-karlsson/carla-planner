@@ -24,6 +24,16 @@ export class TimeUnit implements TimeUnitType {
 		}
 	}
 
+	get timeString() {
+		const hours = Math.floor(this.minutes / 60)
+		const minutes = this.minutes % 60
+		return `${hours}:${minutes < 10 ? `0${minutes}` : minutes}`
+	}
+
+	add(other: TimeUnitType) {
+		return new TimeUnit(this.minutes + other.minutes)
+	}
+
 	getFromMinutes(minutes: number) {
 		return Math.max(Math.round(minutes / 5) * 5, 5)
 	}

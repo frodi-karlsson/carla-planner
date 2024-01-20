@@ -4,12 +4,13 @@ import {IonTitle} from '@ionic/react'
 import CalendarDay from './components/CalendarDay/CalendarDay'
 
 const CalendarWeek: React.FC = () => {
+	let timeOut: NodeJS.Timeout | undefined
 	const scrollTo = (element: HTMLElement) => {
 		element.scrollIntoView()
 	}
 
 	useEffect(() => {
-		setTimeout(() => {
+		timeOut = setTimeout(() => {
 			const morningHour = 8
 			const ticks = document.getElementsByClassName('CalendarWeek__content__timeTicks__tick')
 			const tick = ticks?.[morningHour - 1] as HTMLElement | undefined
@@ -17,6 +18,11 @@ const CalendarWeek: React.FC = () => {
 				scrollTo(tick)
 			}
 		})
+		return () => {
+			if (timeOut) {
+				clearTimeout(timeOut)
+			}
+		}
 	}, [])
 
 	const timeTicks = []

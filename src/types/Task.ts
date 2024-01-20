@@ -1,6 +1,8 @@
 export type TimeUnitType = {
 	minutes: number;
 	unix: number;
+	timeString: string;
+	add(other: TimeUnitType): TimeUnitType;
 }
 
 export type Task = {
