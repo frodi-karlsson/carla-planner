@@ -6,10 +6,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
       - name: Setup Yarn
-        uses: ./.github/workflows/setup-yarn
+        uses: ./.github/actions/setup-yarn
       - name: Run unit tests
         uses: borales/actions-yarn@v4.2.0
         with:
