@@ -6,11 +6,15 @@
   "scripts": {
     "test.e2e": "cypress run",
     "serve": "ionic serve",
+    "build": "ionic build",
+    "sync": "cap sync",
+    "electron": "ionic cap open electron",
     "test.unit": "vitest",
     "lint": "eslint",
     "lint.fix": "eslint --fix"
   },
   "dependencies": {
+    "@capacitor-community/electron": "^5.0.1",
     "@capacitor/app": "5.0.6",
     "@capacitor/core": "5.6.0",
     "@capacitor/filesystem": "^5.2.0",
