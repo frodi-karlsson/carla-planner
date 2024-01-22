@@ -1,11 +1,11 @@
 import React, {useState} from 'react'
-import {type Task} from '@/types/Task'
+import {type Task} from '@/models/Task/Task.types'
 import './TaskElem.scss'
-import {minuteHeight} from '../../util/constants'
+import {minuteHeight} from './util/constants'
 import {IonChip, IonHeader, IonIcon, IonModal, IonText, IonTitle} from '@ionic/react'
 import {closeOutline} from 'ionicons/icons'
 import {useDrag} from 'react-dnd'
-import {type TimeUnit} from '@/util/TimeUnit'
+import {TimeUnit} from '@/models/TimeUnit/TimeUnit.types'
 
 type TaskElemProps = {
 	task: Task;
@@ -21,7 +21,7 @@ const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left, i
 		item: task,
 	}))
 
-	const taskHeight = Math.max((task.length.minutes * minuteHeight), 30 * minuteHeight) + 'px'
+	const taskHeight = Math.max((task.fields.length.minutes * minuteHeight), 30 * minuteHeight) + 'px'
 	const [showModal, setShowModal] = useState(false)
 
 	const handleModalCloseButtonClick = () => {
@@ -33,10 +33,10 @@ const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left, i
 			ref={drag}
 			className='Task'
 			style={{
-				backgroundColor: task.color,
+				backgroundColor: task.fields.color,
 				height: taskHeight,
 				width: `calc(${100 / widthModifier}% - 2px)`,
-				top: task.start.minutes * minuteHeight,
+				top: task.fields.startTime.minutes * minuteHeight,
 				left,
 				zIndex,
 			}}
@@ -45,15 +45,20 @@ const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left, i
 				setShowModal(true)
 			}}>
 				<div className='Task__small__title'>
-					{task.title}
+					{task.fields.title}
 				</div>
 
 				<div className='Task__small__time'>
-					{task.start.timeString} - {(task.start.add(task.length)).timeString}
+					{task.fields.startTime.timeString} - {
+						TimeUnit.from({
+							minutes: task.fields.startTime.minutes + task.fields.length.minutes,
+						}).timeString
+					}
+
 				</div>
-				{task.description && Number(taskHeight.split('px')[0]) / minuteHeight > 30 && widthModifier <= 1
+				{task.fields.description && Number(taskHeight.split('px')[0]) / minuteHeight > 30 && widthModifier <= 1
 				&& <div className='Task__small__description'>
-					{task.description}
+					{task.fields.description}
 				</div>}
 			</div>
 
@@ -67,7 +72,7 @@ const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left, i
 			>
 				<IonHeader className='Task__modal__header'>
 					<IonTitle className='Task__modal__header__title' color='white'>
-						{task.title}
+						{task.fields.title}
 					</IonTitle>
 					<IonIcon
 						className='Task__modal__header__closeButton'
@@ -83,10 +88,14 @@ const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left, i
 					setShowModal(true)
 				}}>
 					<IonChip className='Task__modal__content__time' color='white'>
-						{task.start.timeString} - {(task.start.add(task.length)).timeString}
+						{task.fields.startTime.timeString} - {
+							TimeUnit.from({
+								minutes: task.fields.startTime.minutes + task.fields.length.minutes,
+							}).timeString
+						}
 					</IonChip>
 					<IonText className='Task__modal__content__description' color='white'>
-						{task.description}
+						{task.fields.description}
 					</IonText>
 				</div>
 				<div className='Task__modal__buttons'>

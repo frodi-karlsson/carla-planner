@@ -1,33 +1,15 @@
-import {type Task, type TaskJsonObj} from '@/types/Task'
-import {TimeUnit} from '@/util/TimeUnit'
+import {taskModelSchema} from '@/models/Task/Task.model'
+import {type Task} from '@/models/Task/Task.types'
+import {deserialize, serialize} from 'serializr'
 
 export const taskUtil = {
 	toJson(tasks: Task[]): string {
-		const taskJsonObjs: TaskJsonObj[] = tasks.map(task => {
-			const start = task.start.minutes
-			const length = task.length.minutes
-
-			const ret = {
-				...task,
-				start,
-				length,
-			}
-			return ret
-		})
-
-		return JSON.stringify(taskJsonObjs)
+		return JSON.stringify(serialize(taskModelSchema, tasks))
 	},
 	fromJson(json: string): Task[] {
-		const taskJsonObjs: TaskJsonObj[] = JSON.parse(json) as TaskJsonObj[]
-		return taskJsonObjs.map(taskJsonObj => {
-			const start = new TimeUnit(taskJsonObj.start)
-			const length = new TimeUnit(taskJsonObj.length)
-
-			return {
-				...taskJsonObj,
-				start,
-				length,
-			}
-		})
+		const parsed = JSON.parse(json) as Array<readonly [string, unknown]>
+		return parsed.map(
+			task => deserialize(taskModelSchema, task),
+		)
 	},
 }

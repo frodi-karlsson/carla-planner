@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import './CalendarWeek.scss'
 import {IonTitle} from '@ionic/react'
-import CalendarDay from './components/CalendarDay/CalendarDay'
+import CalendarDay from './CalendarDay'
 
 const CalendarWeek: React.FC = () => {
 	let timeOut: NodeJS.Timeout | undefined
@@ -50,6 +50,9 @@ const CalendarWeek: React.FC = () => {
 	const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 	return (
 		<div className='CalendarWeek'>
+			<div className='CalendarWeek__header'>
+				<IonTitle>Week 1</IonTitle>
+			</div>
 			<div className='CalendarWeek__content'>
 				<div className='CalendarWeek__content__timeTicks'>
 					{timeTicks}
@@ -70,7 +73,7 @@ const CalendarWeek: React.FC = () => {
 						{
 							days.map((day, index) => (
 								<div key={index} className='CalendarWeek__content__days__list__day'>
-									<CalendarDay />
+									<CalendarDay year={2021} week={1} day={index} />
 								</div>
 							))
 						}
