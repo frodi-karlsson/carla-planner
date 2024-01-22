@@ -24,7 +24,7 @@ export class SingleTask implements SingleTaskProps {
 	}
 }
 
-export type recurrenceProps = {
+export type RecurrenceProps = {
 	/**
 	 * The type of recurrence
 	 *
@@ -48,7 +48,7 @@ export type recurrenceProps = {
 	month?: number;
 }
 
-export class recurrence implements recurrenceProps {
+export class Recurrence implements RecurrenceProps {
 	type: 'daily' | 'workdaily' | 'weekly' | 'monthly' | 'yearly'
 	day?: number
 	month?: number
@@ -56,27 +56,27 @@ export class recurrence implements recurrenceProps {
 	 * @deprecated Use an object with type recurrenceProps instead
 	 * @param props The properties that define the recurrence
 	 */
-	constructor(private readonly props: recurrenceProps) {
+	constructor(private readonly props: RecurrenceProps) {
 		this.type = props.type
 		this.day = props.day
 		this.month = props.month
 	}
 }
 
-export type recurringTaskProps = {
+export type RecurringTaskProps = {
 	/**
 	 * Properties that define the recurrence of the task
 	 */
-	recurrence: recurrenceProps;
+	recurrence: RecurrenceProps;
 }
 
-export class recurringTask implements recurringTaskProps {
-	recurrence: recurrenceProps
+export class RecurringTask implements RecurringTaskProps {
+	recurrence: RecurrenceProps
 	/**
 	 * @deprecated Use an object with type recurringTaskProps instead
 	 * @param props The properties that define the recurring task
 	 */
-	constructor(private readonly props: recurringTaskProps) {
+	constructor(private readonly props: RecurringTaskProps) {
 		this.recurrence = props.recurrence
 	}
 }
@@ -131,7 +131,7 @@ export type TaskPropsFields = {
 	/**
 	 * Fields specific to recurring tasks
 	 */
-	recurringTask?: recurringTaskProps;
+	recurringTask?: RecurringTaskProps;
 	/**
 	 * Fields specific to override tasks
 	 */
@@ -146,7 +146,7 @@ export class TaskFields implements TaskPropsFields {
 	length: TimeUnitProps
 	color: string
 	singleTask?: SingleTaskProps
-	recurringTask?: recurringTaskProps
+	recurringTask?: RecurringTaskProps
 	overrideTask?: OverrideTaskProps
 	/**
 	 * @deprecated Use an object with type TaskFields instead

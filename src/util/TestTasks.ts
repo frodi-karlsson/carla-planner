@@ -1,4 +1,4 @@
-import {Task, TaskFields, recurrence, recurringTask, SingleTask, OverrideTask} from '@/models/Task/Task.types'
+import {Task, TaskFields, Recurrence, RecurringTask, SingleTask, OverrideTask} from '@/models/Task/Task.types'
 import {TimeUnit} from '@/models/TimeUnit/TimeUnit.types'
 
 export const testTasks: Task[] = [

@@ -1,4 +1,4 @@
-import {OverrideTask, type OverrideTaskProps, recurrence, type recurrenceProps, recurringTask, type recurringTaskProps, SingleTask, type SingleTaskProps, Task, TaskFields, type TaskPropsFields, type TaskAllProps} from '@/models/Task/Task.types'
+import {OverrideTask, type OverrideTaskProps, Recurrence, type RecurrenceProps, RecurringTask, type RecurringTaskProps, SingleTask, type SingleTaskProps, Task, TaskFields, type TaskPropsFields, type TaskAllProps} from '@/models/Task/Task.types'
 import {
 	object,
 	primitive,
@@ -22,23 +22,23 @@ const singleTaskModelSchema = createModelSchema(SingleTask, singleTaskPropSchema
 	return json
 })
 
-const recurrencePropSchema: Props<recurrenceProps> = {
+const recurrencePropSchema: Props<RecurrenceProps> = {
 	type: primitive(),
 	day: primitive(),
 	month: primitive(),
 }
 
-const recurrenceModelSchema = createModelSchema(recurrence, recurrencePropSchema, context => {
-	const json = context.json as recurrenceProps
+const recurrenceModelSchema = createModelSchema(Recurrence, recurrencePropSchema, context => {
+	const json = context.json as RecurrenceProps
 	return json
 })
 
-const recurringTaskPropSchema: Props<recurringTaskProps> = {
+const recurringTaskPropSchema: Props<RecurringTaskProps> = {
 	recurrence: object(recurrenceModelSchema),
 }
 
-const recurringTaskModelSchema = createModelSchema(recurringTask, recurringTaskPropSchema, context => {
-	const json = context.json as recurringTaskProps
+const recurringTaskModelSchema = createModelSchema(RecurringTask, recurringTaskPropSchema, context => {
+	const json = context.json as RecurringTaskProps
 	return json
 })
 
