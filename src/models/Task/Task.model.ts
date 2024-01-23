@@ -1,79 +1,236 @@
-import {OverrideTask, type OverrideTaskProps, Recurrence, type RecurrenceProps, RecurringTask, type RecurringTaskProps, SingleTask, type SingleTaskProps, Task, TaskFields, type TaskPropsFields, type TaskAllProps} from '@/models/Task/Task.types'
-import {
-	object,
-	primitive,
-	createModelSchema,
-	type PropSchema,
-	identifier,
-} from 'serializr'
-import {TimeUnit} from '@/models/TimeUnit/TimeUnit.types'
-import {timeUnitSchema} from '@/models/TimeUnit/TimeUnit.model'
+import {type TimeUnitProps, type TimeUnit} from '@/models/TimeUnit/TimeUnit.model'
+import {primitive} from 'serializr'
 
-type Props<T extends Record<string, unknown>> = {
-	[K in keyof Required<T>]: PropSchema
+export type SingleTaskProps = {
+	/**
+	 * The date of the task in the format YYYY-WW-DD
+	 * We use weeks instead of months because months are not a consistent length.
+	 * This is not suitable for recurring tasks because the week number will change every year,
+	 * but it is suitable for single tasks because the week number will not change.
+	 *
+	 * Week number is according to ISO 8601
+	 */
+	date: `${number}-${number}-${number}`;
 }
 
-const singleTaskPropSchema: Props<SingleTaskProps> = {
-	date: primitive(),
+export class SingleTask implements SingleTaskProps {
+	date: `${number}-${number}-${number}`
+	/**
+	 * @deprecated Use an object with type SingleTaskProps instead
+	 * @param props The properties that define the single task
+	 */
+	constructor(private readonly props: SingleTaskProps) {
+		this.date = props.date
+	}
 }
 
-const singleTaskModelSchema = createModelSchema(SingleTask, singleTaskPropSchema, context => {
-	const json = context.json as SingleTaskProps
-	return json
-})
-
-const recurrencePropSchema: Props<RecurrenceProps> = {
-	type: primitive(),
-	day: primitive(),
-	month: primitive(),
+export type RecurrenceProps = {
+	/**
+	 * The type of recurrence
+	 *
+	 * - daily: The task occurs every day
+	 * - workdaily: The task occurs every day except weekends
+	 * - weekly: The task occurs every week on a specific day
+	 * - monthly: The task occurs every month on a specific day
+	 * - yearly: The task occurs every year on a specific day
+	 */
+	type: 'daily' | 'workdaily' | 'weekly' | 'monthly' | 'yearly';
+	/**
+	 * The day the task occurs on
+	 * - For weekly tasks, this is the day of the week
+	 * - For monthly and yearly tasks, this is the day of the month
+	 */
+	day?: number;
+	/**
+	 * The month the task occurs on
+	 * - For yearly tasks, this is the month of the year
+	 */
+	month?: number;
+	/**
+	 * The times the task is cancelled for
+	 */
+	cancelledFor: Array<{
+		/**
+		 * The day the task is cancelled for
+		 * This is used for daily-like tasks
+		 */
+		day?: number;
+		/**
+		 * The week the task is cancelled for
+		 * This is used for weekly tasks
+		 */
+		week?: number;
+		/**
+		 * The month the task is cancelled for
+		 * This is used for monthly and daily tasks
+		 */
+		month?: number;
+		/**
+		 * The year the task is cancelled for
+		 * This is used for yearly, monthly, weekly, and daily tasks
+		 */
+		year?: number;
+	}>;
 }
 
-const recurrenceModelSchema = createModelSchema(Recurrence, recurrencePropSchema, context => {
-	const json = context.json as RecurrenceProps
-	return json
-})
-
-const recurringTaskPropSchema: Props<RecurringTaskProps> = {
-	recurrence: object(recurrenceModelSchema),
+export type CancelledForItemProps = {
+	day?: number;
+	week?: number;
+	month?: number;
+	year?: number;
 }
 
-const recurringTaskModelSchema = createModelSchema(RecurringTask, recurringTaskPropSchema, context => {
-	const json = context.json as RecurringTaskProps
-	return json
-})
-
-const overrideTaskPropSchema: Props<OverrideTaskProps> = {
-	reOccuringTaskId: primitive(),
+export class CancelledForItem implements CancelledForItemProps {
+	day?: number
+	week?: number
+	month?: number
+	year?: number
+	/**
+	 * @deprecated Use an object with type CancelledForItemProps instead
+	 * @param props The properties that define the cancelled for item
+	 */
+	constructor(private readonly props: CancelledForItemProps) {
+		this.day = props.day
+		this.week = props.week
+		this.month = props.month
+		this.year = props.year
+	}
 }
 
-const overrideTaskModelSchema = createModelSchema(OverrideTask, overrideTaskPropSchema, context => {
-	const json = context.json as OverrideTaskProps
-	return json
-})
+export class Recurrence implements RecurrenceProps {
+	type: 'daily' | 'workdaily' | 'weekly' | 'monthly' | 'yearly'
+	day?: number
+	month?: number
+	cancelledFor: CancelledForItemProps[]
 
-const taskFieldsSchema: Props<TaskPropsFields> = {
-	id: identifier(),
-	title: primitive(),
-	description: primitive(),
-	startTime: object(timeUnitSchema),
-	length: object(timeUnitSchema),
-	color: primitive(),
-	overrideTask: object(overrideTaskModelSchema),
-	recurringTask: object(recurringTaskModelSchema),
-	singleTask: object(singleTaskModelSchema),
+	/**
+	 * @deprecated Use an object with type recurrenceProps instead
+	 * @param props The properties that define the recurrence
+	 */
+	constructor(private readonly props: RecurrenceProps) {
+		this.type = props.type
+		this.day = props.day
+		this.month = props.month
+		this.cancelledFor = props.cancelledFor ?? []
+	}
 }
 
-const taskFieldsModelSchema = createModelSchema(TaskFields, taskFieldsSchema, context => {
-	const json = context.json as TaskPropsFields
-	return json
-})
-
-const taskPropSchema: Props<TaskAllProps> = {
-	type: primitive(),
-	fields: object(taskFieldsModelSchema),
+export type RecurringTaskProps = {
+	/**
+	 * Properties that define the recurrence of the task
+	 */
+	recurrence: RecurrenceProps;
 }
 
-export const taskModelSchema = createModelSchema(Task, taskPropSchema, context => {
-	const json = context.json as TaskAllProps
-	return json
-})
+export class RecurringTask implements RecurringTaskProps {
+	recurrence: RecurrenceProps
+	/**
+	 * @deprecated Use an object with type recurringTaskProps instead
+	 * @param props The properties that define the recurring task
+	 */
+	constructor(private readonly props: RecurringTaskProps) {
+		this.recurrence = props.recurrence
+	}
+}
+
+export type TaskPropsFields = {
+	/**
+	 * Unique identifier for the task
+	 */
+	id: string;
+	/**
+	 * The title of the task
+	 */
+	title: string;
+	/**
+	 * The description of the task
+	 */
+	description?: string;
+	/**
+	 * The start time of the task.
+	 */
+	startTime: TimeUnitProps;
+	/**
+	 * The length of the task.
+	 */
+	length: TimeUnitProps;
+	/**
+	 * The color the task should be displayed as in the UI
+	 */
+	color: string;
+	/**
+	 * Fields specific to single tasks
+	 */
+	singleTask?: SingleTaskProps;
+	/**
+	 * Fields specific to recurring tasks
+	 */
+	recurringTask?: RecurringTaskProps;
+}
+
+export class TaskFields implements TaskPropsFields {
+	id: string
+	title: string
+	description?: string
+	startTime: TimeUnitProps
+	length: TimeUnitProps
+	color: string
+	singleTask?: SingleTaskProps
+	recurringTask?: RecurringTaskProps
+	/**
+	 * @deprecated Use an object with type TaskFields instead
+	 * @param props The properties that define the task
+	 */
+	constructor(private readonly props?: TaskPropsFields) {
+		if (!props) {
+			throw new Error('Task must have props')
+		}
+
+		this.id = props.id
+		this.title = props.title
+		this.description = props.description
+		this.startTime = props.startTime
+		this.length = props.length
+		this.color = props.color
+		this.singleTask = props.singleTask
+		this.recurringTask = props.recurringTask
+	}
+}
+
+export type TaskAllProps = {
+	/**
+	 * The type of task
+	 */
+	type: 'single' | 'recurring';
+	/**
+	 * The fields that define the task
+	 */
+	fields: TaskFields;
+}
+
+export class Task implements TaskAllProps {
+	static from(props: TaskAllProps): Task {
+		if (!props.fields.singleTask && !props.fields.recurringTask) {
+			throw new Error('Task must have type specific fields')
+		}
+
+		return props
+	}
+
+	type: 'single' | 'recurring'
+
+	fields: TaskFields
+
+	/**
+	 * @deprecated Use Task.from instead
+	 * @param props The properties that define the task
+	 */
+	constructor(private readonly props?: TaskAllProps) {
+		if (!props) {
+			throw new Error('Task must have props')
+		}
+
+		this.type = props.type
+		this.fields = props.fields
+	}
+}

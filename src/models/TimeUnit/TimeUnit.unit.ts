@@ -1,5 +1,5 @@
 import React from 'react'
-import {TimeUnit} from './TimeUnit.types'
+import {TimeUnit} from './TimeUnit.model'
 
 describe('TimeUnit', () => {
 	test('TimeUnit initialized with hour and minute has correct values', () => {

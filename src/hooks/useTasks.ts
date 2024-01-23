@@ -1,8 +1,8 @@
 import {useCallback} from 'react'
-import {type Task} from '@/models/Task/Task.types'
+import {type Task} from '@/models/Task/Task.model'
 import {useStorage} from './useStorage'
 import {deserialize} from 'serializr'
-import {taskModelSchema} from '@/models/Task/Task.model'
+import {taskModelSchema} from '@/models/Task/Task.schema'
 import {taskUtil} from '@/util/TaskUtils'
 
 const tasksKey = 'tasks'

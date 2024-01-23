@@ -1,11 +1,15 @@
-import React, {useState} from 'react'
-import {type Task} from '@/models/Task/Task.types'
+import React, {useCallback, useState} from 'react'
+import {type Task} from '@/models/Task/Task.model'
 import './TaskElem.scss'
 import {minuteHeight} from './util/constants'
 import {IonChip, IonHeader, IonIcon, IonModal, IonText, IonTitle} from '@ionic/react'
 import {closeOutline} from 'ionicons/icons'
 import {useDrag} from 'react-dnd'
-import {TimeUnit} from '@/models/TimeUnit/TimeUnit.types'
+import {TimeUnit} from '@/models/TimeUnit/TimeUnit.model'
+import {type CalendarDayProps} from './CalendarDay'
+import {useTasks} from '@/hooks/useTasks'
+import moment from 'moment'
+import {dragSource} from './util/task-dnd'
 
 type TaskElemProps = {
 	task: Task;
@@ -16,9 +20,12 @@ type TaskElemProps = {
 }
 
 const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left, isDragging}) => {
-	const [_, drag] = useDrag(() => ({
+	const onDrop = useCallback(dragSource().onDrop, [])
+
+	const [_, drag] = useDrag<Task, CalendarDayProps>(() => ({
 		type: 'Task',
 		item: task,
+		end: onDrop?.bind(this),
 	}))
 
 	const taskHeight = Math.max((task.fields.length.minutes * minuteHeight), 30 * minuteHeight) + 'px'

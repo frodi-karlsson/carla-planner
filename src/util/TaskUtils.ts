@@ -1,5 +1,5 @@
-import {taskModelSchema} from '@/models/Task/Task.model'
-import {type Task} from '@/models/Task/Task.types'
+import {taskModelSchema} from '@/models/Task/Task.schema'
+import {type Task} from '@/models/Task/Task.model'
 import {deserialize, serialize} from 'serializr'
 
 export const taskUtil = {

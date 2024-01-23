@@ -1,5 +1,5 @@
-import {TimeUnit} from '../TimeUnit/TimeUnit.types'
-import {Task} from './Task.types'
+import {TimeUnit} from '../TimeUnit/TimeUnit.model'
+import {Task} from './Task.model'
 
 describe('Task', () => {
 	test('Single task initializes correctly', () => {

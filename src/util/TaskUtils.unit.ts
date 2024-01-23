@@ -1,6 +1,6 @@
-import {Recurrence, RecurringTask, Task, TaskFields} from '@/models/Task/Task.types'
+import {Recurrence, RecurringTask, Task, TaskFields} from '@/models/Task/Task.model'
 import {taskUtil} from './TaskUtils'
-import {TimeUnit} from '@/models/TimeUnit/TimeUnit.types'
+import {TimeUnit} from '@/models/TimeUnit/TimeUnit.model'
 describe('TaskUtils', () => {
 	test('serialize and deserialize single', () => {
 		const task: Task = Task.from({
@@ -47,32 +47,8 @@ describe('TaskUtils', () => {
 					recurrence: {
 						type: 'weekly',
 						day: 1,
+						cancelledFor: [],
 					},
-				},
-			},
-		})
-		const serialized = taskUtil.toJson([task])
-		const deserialized = taskUtil.fromJson(serialized)
-		expect(deserialized).toEqual([task])
-	})
-
-	test('serialize and deserialize override', () => {
-		const task: Task = Task.from({
-			type: 'override',
-			fields: {
-				id: 'test',
-				title: 'test',
-				description: 'test',
-				startTime: TimeUnit.from({
-					minutes: 30,
-				}),
-				length: TimeUnit.from({
-					hours: 1,
-					minutes: 30,
-				}),
-				color: '#000000',
-				overrideTask: {
-					reOccuringTaskId: 'test',
 				},
 			},
 		})

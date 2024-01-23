@@ -1,5 +1,5 @@
-import {Task, TaskFields, Recurrence, RecurringTask, SingleTask, OverrideTask} from '@/models/Task/Task.types'
-import {TimeUnit} from '@/models/TimeUnit/TimeUnit.types'
+import {Task} from '@/models/Task/Task.model'
+import {TimeUnit} from '@/models/TimeUnit/TimeUnit.model'
 
 export const testTasks: Task[] = [
 	Task.from({
@@ -20,6 +20,7 @@ export const testTasks: Task[] = [
 			recurringTask: {
 				recurrence: {
 					type: 'daily',
+					cancelledFor: [],
 				},
 			},
 		},
@@ -42,6 +43,7 @@ export const testTasks: Task[] = [
 			recurringTask: {
 				recurrence: {
 					type: 'workdaily',
+					cancelledFor: [],
 				},
 			},
 		},
@@ -65,6 +67,7 @@ export const testTasks: Task[] = [
 				recurrence: {
 					type: 'weekly',
 					day: 5,
+					cancelledFor: [],
 				},
 			},
 		},
@@ -86,26 +89,6 @@ export const testTasks: Task[] = [
 			color: 'rgb(255, 80, 80)',
 			singleTask: {
 				date: `${2021}-${1}-${1}`,
-			},
-		},
-	}),
-	Task.from({
-		type: 'override',
-		fields: {
-			id: '5',
-			title: 'Skip breakfast',
-			description: 'This is an override task',
-			startTime: TimeUnit.from({
-				hours: 7,
-				minutes: 0,
-			}),
-			length: TimeUnit.from({
-				hours: 0,
-				minutes: 0,
-			}),
-			color: 'rgb(255, 80, 80)',
-			overrideTask: {
-				reOccuringTaskId: '1',
 			},
 		},
 	}),
