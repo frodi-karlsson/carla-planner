@@ -4,8 +4,6 @@ import {type CalendarDayProps} from '../CalendarDay'
 import {TimeUnit} from '@/models/TimeUnit/TimeUnit.model'
 import moment from 'moment'
 import {minuteHeight} from './constants'
-import {useCallback} from 'react'
-import {useTasks} from '@/hooks/useTasks'
 
 type DropTargetUtil = {
 	onDrop: NonNullable<DropTargetHookSpec<

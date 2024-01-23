@@ -1,4 +1,4 @@
-import {Recurrence, RecurringTask, Task, TaskFields} from '@/models/Task/Task.model'
+import {Task} from '@/models/Task/Task.model'
 import {taskUtil} from './TaskUtils'
 import {TimeUnit} from '@/models/TimeUnit/TimeUnit.model'
 describe('TaskUtils', () => {

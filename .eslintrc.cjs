@@ -6,6 +6,8 @@ module.exports = {
   extends: [
     'xo',
     'plugin:react/recommended',
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
   ],
   overrides: [
     {
@@ -46,6 +48,9 @@ module.exports = {
   },
   plugins: [
     'react',
+  ],
+  ignorePatterns: [
+    '.eslintrc.cjs',
   ],
   rules: {
     indent: 'off',
