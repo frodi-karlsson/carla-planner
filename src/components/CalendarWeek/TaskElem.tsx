@@ -2,14 +2,12 @@ import React, {useCallback, useState} from 'react'
 import {type Task} from '@/models/Task/Task.model'
 import './TaskElem.scss'
 import {minuteHeight} from './util/constants'
-import {IonChip, IonHeader, IonIcon, IonModal, IonText, IonTitle} from '@ionic/react'
-import {closeOutline} from 'ionicons/icons'
+import {IonChip, IonText} from '@ionic/react'
 import {useDrag} from 'react-dnd'
 import {TimeUnit} from '@/models/TimeUnit/TimeUnit.model'
 import {type CalendarDayProps} from './CalendarDay'
-import {useTasks} from '@/hooks/useTasks'
-import moment from 'moment'
 import {dragSource} from './util/task-dnd'
+import {Modal} from '../Modal/Modal'
 
 type TaskElemProps = {
 	task: Task;
@@ -19,10 +17,10 @@ type TaskElemProps = {
 	isDragging?: boolean;
 }
 
-const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left, isDragging}) => {
+const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left}) => {
 	const onDrop = useCallback(dragSource().onDrop, [])
 
-	const [_, drag] = useDrag<Task, CalendarDayProps>(() => ({
+	const [, drag] = useDrag<Task, CalendarDayProps>(() => ({
 		type: 'Task',
 		item: task,
 		end: onDrop?.bind(this),
@@ -69,45 +67,38 @@ const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left, i
 				</div>}
 			</div>
 
-			<IonModal
-				id='Task__modal'
+			<Modal
 				isOpen={showModal}
-				onDidDismiss={() => {
-					setShowModal(false)
-				}}
-				className='Task__modal'
+				title={task.fields.title}
+				onClose={handleModalCloseButtonClick}
 			>
-				<IonHeader className='Task__modal__header'>
-					<IonTitle className='Task__modal__header__title' color='white'>
-						{task.fields.title}
-					</IonTitle>
-					<IonIcon
-						className='Task__modal__header__closeButton'
-						onClick={() => {
-							handleModalCloseButtonClick()
-						}}
-						color='white'
-						size='large'
-						icon={closeOutline}
-					/>
-				</IonHeader>
-				<div className='Task__modal__content' onClick={() => {
-					setShowModal(true)
-				}}>
-					<IonChip className='Task__modal__content__time' color='white'>
-						{task.fields.startTime.timeString} - {
-							TimeUnit.from({
-								minutes: task.fields.startTime.minutes + task.fields.length.minutes,
-							}).timeString
-						}
-					</IonChip>
-					<IonText className='Task__modal__content__description' color='white'>
-						{task.fields.description}
-					</IonText>
-				</div>
-				<div className='Task__modal__buttons'>
-				</div>
-			</IonModal>
+				<IonChip className='Task__modal__time' color='white'>
+					{task.fields.startTime.timeString} - {
+						TimeUnit.from({
+							minutes: task.fields.startTime.minutes + task.fields.length.minutes,
+						}).timeString
+					}
+				</IonChip>
+				<IonText className='Task__modal__description' color='white'>
+					{task.fields.description}
+				</IonText>
+				<div className='Task__modal__buttons' />
+			</Modal>
+
+			<div onClick={() => {
+				setShowModal(true)
+			}}>
+				<IonChip className='Task__small__time' color='white'>
+					{task.fields.startTime.timeString} - {
+						TimeUnit.from({
+							minutes: task.fields.startTime.minutes + task.fields.length.minutes,
+						}).timeString
+					}
+				</IonChip>
+				<IonText className='Task__small__description' color='white'>
+					{task.fields.description}
+				</IonText>
+			</div>
 		</div>
 
 	)

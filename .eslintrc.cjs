@@ -51,6 +51,7 @@ module.exports = {
   ],
   ignorePatterns: [
     '.eslintrc.cjs',
+    '*.scss',
   ],
   rules: {
     semi: [
