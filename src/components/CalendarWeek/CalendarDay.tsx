@@ -1,14 +1,14 @@
 import React from 'react'
 import './CalendarDay.scss'
 import CalendarDayTaskArea from './CalendarDayTaskArea'
-import {type useTasks} from '@/hooks/useTasks'
+import {type TaskContext} from '@/types/TaskContext'
 
 export type CalendarDayProps = {
 	year: number;
 	month: number;
 	week: number;
 	day: number;
-	taskContext: ReturnType<typeof useTasks>;
+	taskContext: TaskContext;
 }
 
 const CalendarDay: React.FC<CalendarDayProps> = ({year, month, week, day, taskContext}) => (

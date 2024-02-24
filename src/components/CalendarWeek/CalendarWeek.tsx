@@ -2,10 +2,10 @@ import React, {useEffect} from 'react'
 import './CalendarWeek.scss'
 import {IonTitle} from '@ionic/react'
 import CalendarDay from './CalendarDay'
-import {type useTasks} from '@/hooks/useTasks'
+import {type TaskContext} from '@/types/TaskContext'
 
 type CalendarWeekProps = {
-	taskContext: ReturnType<typeof useTasks>;
+	taskContext: TaskContext;
 }
 
 const CalendarWeek: React.FC<CalendarWeekProps> = ({taskContext}) => {

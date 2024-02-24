@@ -4,10 +4,10 @@ import {
 	IonPage,
 } from '@ionic/react'
 import CalendarWeek from '@/components/CalendarWeek/CalendarWeek'
-import {type useTasks} from '@/hooks/useTasks'
+import {type TaskContext} from '@/types/TaskContext'
 
 type MainViewProps = {
-	taskContext: ReturnType<typeof useTasks>;
+	taskContext: TaskContext;
 }
 
 const MainView: React.FC<MainViewProps> = ({taskContext}) => (

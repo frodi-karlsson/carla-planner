@@ -2,12 +2,13 @@ import React, {useCallback, useState} from 'react'
 import {type Task} from '@/models/Task/Task.model'
 import './TaskElem.scss'
 import {minuteHeight} from './util/constants'
-import {IonChip, IonText} from '@ionic/react'
+import {IonButton, IonChip, IonText} from '@ionic/react'
 import {useDrag} from 'react-dnd'
 import {TimeUnit} from '@/models/TimeUnit/TimeUnit.model'
 import {type CalendarDayProps} from './CalendarDay'
 import {dragSource} from './util/task-dnd'
 import {Modal} from '../Modal/Modal'
+import {type TaskContext} from '@/types/TaskContext'
 
 type TaskElemProps = {
 	task: Task;
@@ -15,9 +16,10 @@ type TaskElemProps = {
 	left: string;
 	zIndex?: number;
 	isDragging?: boolean;
+	taskContext: TaskContext;
 }
 
-const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left}) => {
+const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left, taskContext}) => {
 	const onDrop = useCallback(dragSource().onDrop, [])
 
 	const [, drag] = useDrag<Task, CalendarDayProps>(() => ({
@@ -30,6 +32,16 @@ const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left}) 
 	const [showModal, setShowModal] = useState(false)
 
 	const handleModalCloseButtonClick = () => {
+		setShowModal(false)
+	}
+
+	const saveTask = (task: Task) => {
+		taskContext.update(task.fields.id, task)
+		setShowModal(false)
+	}
+
+	const deleteTask = (task: Task) => {
+		taskContext.remove(task)
 		setShowModal(false)
 	}
 
@@ -82,7 +94,14 @@ const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left}) 
 				<IonText className='Task__modal__description' color='white'>
 					{task.fields.description}
 				</IonText>
-				<div className='Task__modal__buttons' />
+				<div className='Task__modal__buttons'>
+					<IonButton color='dark' onClick={() => {
+						saveTask(task)
+					}}>Save</IonButton>
+					<IonButton color='dark' onClick={() => {
+						deleteTask(task)
+					}}>Delete</IonButton>
+				</div>
 			</Modal>
 
 			<div onClick={() => {

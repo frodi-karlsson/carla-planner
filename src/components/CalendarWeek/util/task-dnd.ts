@@ -2,7 +2,7 @@ import {type DragSourceHookSpec, type DropTargetHookSpec} from 'react-dnd'
 import {Task} from '@/models/Task/Task.model'
 import {TimeUnit} from '@/models/TimeUnit/TimeUnit.model'
 import {minuteHeight} from './constants'
-import {type useTasks} from '@/hooks/useTasks'
+import {type TaskContext} from '@/types/TaskContext'
 
 type DropTargetUtil = {
 	onDrop: NonNullable<DropTargetHookSpec<
@@ -23,7 +23,7 @@ type DragTargetUtil = {
 const modifyTaskOnDrop = async (
 	task: Task,
 	deltaTimeUnit: TimeUnit,
-	taskContext: ReturnType<typeof useTasks>,
+	taskContext: TaskContext,
 ): Promise<void> => {
 	const newTask = Task.from({
 		type: task.type,
@@ -34,11 +34,11 @@ const modifyTaskOnDrop = async (
 			}),
 		},
 	})
-	const [, taskStorage] = taskContext
-	taskStorage.updateTask(task, newTask)
+	const {update} = taskContext
+	update(task.fields.id, newTask)
 }
 
-export const dropTarget = (taskContext: ReturnType<typeof useTasks>): DropTargetUtil => ({
+export const dropTarget = (taskContext: TaskContext): DropTargetUtil => ({
 	onDrop(item, monitor) {
 		console.log('onDrop', item)
 		const diff = monitor.getDifferenceFromInitialOffset()

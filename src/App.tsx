@@ -1,4 +1,4 @@
-import React, {createContext, useEffect, useState} from 'react'
+import React, {createContext, useEffect} from 'react'
 import {Route} from 'react-router-dom'
 import {
 	IonApp,
@@ -28,28 +28,25 @@ import './theme/variables.scss'
 import {DndProvider} from 'react-dnd'
 import {HTML5Backend} from 'react-dnd-html5-backend'
 import MainView from './pages/MainView/MainView'
-import {useTasks} from './hooks/useTasks'
 import {testTasks} from './util/TestTasks'
+import {type TaskContext} from './types/TaskContext'
+import {useStorage} from './hooks/useStorage'
+import {taskModelSchema} from './models/Task/Task.schema'
 
 setupIonicReact()
 
 const App: React.FC = () => {
-	const taskHook = useTasks()
-	const [, taskStorage, hasLoaded] = taskHook
-	const [loaded, setLoaded] = useState(false)
-	const taskContext = createContext(taskHook)
+	const taskHook = useStorage(
+		'tasks',
+		taskModelSchema,
+		t => t.fields.id,
+	)
+	const taskContext = createContext<TaskContext>(taskHook)
 
 	useEffect(() => {
-		const addTestTasks = async () => {
-			for await (const task of testTasks) {
-				await hasLoaded()
-				taskStorage.addTask(task)
-			}
-
-			setLoaded(true)
-		}
-
-		void addTestTasks()
+		testTasks.forEach(task => {
+			taskHook.add(task)
+		})
 	}, [])
 
 	return (
