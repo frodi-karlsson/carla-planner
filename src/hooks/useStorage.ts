@@ -20,7 +20,6 @@ export function useStorage<T>(key: string, schema: ClazzOrModelSchema<T>, id: (v
 		if (!loadedRef.current) {
 			await new Promise<void>(resolve => {
 				const interval = setInterval(() => {
-					console.log('waiting for load', loadedRef.current)
 					if (loadedRef.current) {
 						clearInterval(interval)
 						resolve()
@@ -38,7 +37,6 @@ export function useStorage<T>(key: string, schema: ClazzOrModelSchema<T>, id: (v
 	}, [])
 
 	const addValue = useCallback((value: T) => {
-		console.log('addValue', value)
 		void waitForLoad().then(() => {
 			setStoredValue(old => {
 				if (!old?.some(v => id(v) === id(value))) {
@@ -47,7 +45,6 @@ export function useStorage<T>(key: string, schema: ClazzOrModelSchema<T>, id: (v
 
 				return old
 			})
-			console.log('added Value', value)
 		})
 	}, [])
 
@@ -71,9 +68,7 @@ export function useStorage<T>(key: string, schema: ClazzOrModelSchema<T>, id: (v
 }
 
 export async function readStorage<T>(key: string, schema: ClazzOrModelSchema<T>): Promise<T[]> {
-	console.log('readStorage', key)
 	const fromStorage = await getPreferences({key: getFullKey(key)})
-	console.log('fromStorage', fromStorage)
 	if (!fromStorage.value) {
 		return []
 	}
@@ -85,11 +80,9 @@ export async function setStorage<T>(key: string, value: T[], schema: ClazzOrMode
 	try {
 		const serialized: unknown = serialize<ArrayHolder<T>>(arraySchema<T>(schema), {array: value})
 		const json = JSON.stringify(serialized)
-		console.log('setStorage', key, json)
 		await setPreferences({key: getFullKey(key), value: json})
 		return true
 	} catch (error) {
-		console.warn(`Error setting storage key "${key}":`, error)
 		return false
 	}
 }
