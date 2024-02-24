@@ -1,5 +1,5 @@
-import React from 'react'
-import {Redirect, Route} from 'react-router-dom'
+import React, {createContext, useEffect, useState} from 'react'
+import {Route} from 'react-router-dom'
 import {
 	IonApp,
 	IonRouterOutlet,
@@ -28,23 +28,51 @@ import './theme/variables.scss'
 import {DndProvider} from 'react-dnd'
 import {HTML5Backend} from 'react-dnd-html5-backend'
 import MainView from './pages/MainView/MainView'
+import {useTasks} from './hooks/useTasks'
+import {testTasks} from './util/TestTasks'
 
 setupIonicReact()
 
-const App: React.FC = () => (
-	<IonApp>
-		<IonReactRouter>
-			<IonRouterOutlet>
-				<Route exact path='/'>
-					<DndProvider
-						backend={HTML5Backend}
-					>
-						<MainView />
-					</DndProvider>
-				</Route>
-			</IonRouterOutlet>
-		</IonReactRouter>
-	</IonApp>
-)
+const App: React.FC = () => {
+	const taskHook = useTasks()
+	const [, taskStorage, hasLoaded] = taskHook
+	const [loaded, setLoaded] = useState(false)
+	const taskContext = createContext(taskHook)
+
+	useEffect(() => {
+		const addTestTasks = async () => {
+			for await (const task of testTasks) {
+				await hasLoaded()
+				taskStorage.addTask(task)
+			}
+
+			setLoaded(true)
+		}
+
+		void addTestTasks()
+	}, [])
+
+	return (
+		<IonApp>
+			<IonReactRouter>
+				<IonRouterOutlet>
+					<Route exact path='/'>
+						<taskContext.Provider value={taskHook}>
+							<DndProvider
+								backend={HTML5Backend}
+							>
+								<taskContext.Consumer>
+									{taskContext =>
+										<MainView taskContext={taskContext}/>
+									}
+								</taskContext.Consumer>
+							</DndProvider>
+						</taskContext.Provider>
+					</Route>
+				</IonRouterOutlet>
+			</IonReactRouter>
+		</IonApp>
+	)
+}
 
 export default App

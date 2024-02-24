@@ -53,7 +53,6 @@ module.exports = {
     '.eslintrc.cjs',
   ],
   rules: {
-    indent: 'off',
     semi: [
       'error',
       'never',

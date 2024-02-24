@@ -7,7 +7,6 @@ import {
 	identifier,
 	list,
 } from 'serializr'
-import {TimeUnit} from '@/models/TimeUnit/TimeUnit.model'
 import {timeUnitSchema} from '@/models/TimeUnit/TimeUnit.schema'
 
 type Props<T extends Record<string, unknown>> = {
@@ -16,6 +15,7 @@ type Props<T extends Record<string, unknown>> = {
 
 const singleTaskPropSchema: Props<SingleTaskProps> = {
 	date: primitive(),
+	parent: primitive(),
 }
 
 const singleTaskModelSchema = createModelSchema(SingleTask, singleTaskPropSchema, context => {

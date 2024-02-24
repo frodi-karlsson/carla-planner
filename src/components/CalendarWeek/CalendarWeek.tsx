@@ -2,8 +2,13 @@ import React, {useEffect} from 'react'
 import './CalendarWeek.scss'
 import {IonTitle} from '@ionic/react'
 import CalendarDay from './CalendarDay'
+import {type useTasks} from '@/hooks/useTasks'
 
-const CalendarWeek: React.FC = () => {
+type CalendarWeekProps = {
+	taskContext: ReturnType<typeof useTasks>;
+}
+
+const CalendarWeek: React.FC<CalendarWeekProps> = ({taskContext}) => {
 	let timeOut: NodeJS.Timeout | undefined
 	const scrollTo = (element: HTMLElement) => {
 		element.scrollIntoView()
@@ -73,7 +78,7 @@ const CalendarWeek: React.FC = () => {
 						{
 							days.map((day, index) => (
 								<div key={index} className='CalendarWeek__content__days__list__day'>
-									<CalendarDay year={2021} week={1} day={index} />
+									<CalendarDay taskContext={taskContext} year={2021} month={1} week={1} day={index} />
 								</div>
 							))
 						}

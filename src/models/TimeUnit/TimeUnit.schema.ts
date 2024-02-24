@@ -1,5 +1,5 @@
-import {TimeUnit, type TimeUnitProps} from './TimeUnit.model'
-import {createModelSchema, primitive, type ModelSchema, getDefaultModelSchema} from 'serializr'
+import {TimeUnit} from './TimeUnit.model'
+import {createModelSchema, primitive} from 'serializr'
 
 export const timeUnitSchema = createModelSchema<TimeUnit>(TimeUnit, {
 	minutes: primitive(),

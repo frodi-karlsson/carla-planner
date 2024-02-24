@@ -1,55 +1,81 @@
-import {useEffect, useState} from 'react'
 import {Preferences} from '@capacitor/preferences'
+import {deserialize, serialize, type ClazzOrModelSchema} from 'serializr'
 const {get: getPreferences, set: setPreferences} = Preferences
+
+import {useEffect, useRef, useState, type Dispatch, type SetStateAction} from 'react'
 
 const appName = 'frodi-karlsson.carla-planner'
 
-const getStorage = async<D>(key: string, defaultValue: string | D) => {
-	const {value} = await getPreferences({
-		key: `${appName}.${key}`,
-	})
-	let returnValue: string | D | undefined
-	try {
-		if (value) {
-			returnValue = JSON.parse(value) as D
-		}
-	} catch (e) {
-		returnValue = value ?? undefined
-	}
+type SetValue<T> = Dispatch<SetStateAction<T>>
 
-	return returnValue ?? defaultValue
+function getFullKey(key: string) {
+	return `${appName}.${key}`
 }
 
-export const useStorage = <D>(key: string, defaultValue: D) => {
-	const [value, setValue] = useState<D>()
+export async function init<T>(key: string, schema: ClazzOrModelSchema<T>) {
+	const fromStorage = await readStorage<T>(key, schema)
+	return fromStorage
+}
 
-	const setFromString = (value: string) => {
-		try {
-			setValue(JSON.parse(value) as D | undefined ?? defaultValue)
-		} catch (e) {
-			setValue(value as D)
+export function useStorage<T>(key: string, schema: ClazzOrModelSchema<T>): [T | undefined, SetValue<T | undefined>, () => Promise<void>] {
+	const [storedValue, setStoredValue] = useState<T | undefined>()
+	const loadedRef = useRef(false)
+
+	useEffect(() => {
+		void readStorage<T>(key, schema).then(res => {
+			if (res) {
+				setStoredValue(res)
+			}
+
+			loadedRef.current = true
+		})
+	}, [])
+
+	const setValue = (value: SetStateAction<T | undefined>) => {
+		if (!loadedRef.current) {
+			console.error('Tried to set value before storage was loaded')
+			return
+		}
+
+		loadedRef.current = false
+		const newValue = value instanceof Function ? value(storedValue) : value
+		setStoredValue(newValue)
+		void setStorage<T | undefined>(getFullKey(key), newValue, schema).then(() => {
+			loadedRef.current = true
+		})
+	}
+
+	const waitUntilLoaded = async () => {
+		if (!loadedRef.current) {
+			await new Promise(resolve => {
+				const interval = setInterval(() => {
+					if (loadedRef.current) {
+						clearInterval(interval)
+						resolve(undefined)
+					}
+				}, 100)
+			})
 		}
 	}
 
-	useEffect(() => {
-		if (value ?? typeof value === 'string') {
-			let newValue: string | D
-			try {
-				newValue = JSON.stringify(value)
-			} catch (e) {
-				newValue = value
-			}
+	return [storedValue, setValue, waitUntilLoaded]
+}
 
-			void setPreferences({
-				key: `${appName}.${key}`,
-				value: newValue as string,
-			})
-		} else {
-			void getStorage(key, defaultValue).then(v => {
-				setValue(typeof v === 'string' ? JSON.parse(v) as D : v)
-			})
-		}
-	}, [key, value, defaultValue])
+export async function readStorage<T>(key: string, schema: ClazzOrModelSchema<T>): Promise<T | undefined> {
+	const fromStorage = await getPreferences({key: getFullKey(key)})
+	if (!fromStorage.value) {
+		return undefined
+	}
 
-	return [value, setFromString] as const
+	return deserialize(schema, JSON.parse(fromStorage.value))
+}
+
+export async function setStorage<T>(key: string, value: T, schema: ClazzOrModelSchema<T>): Promise<boolean> {
+	try {
+		await setPreferences({key, value: JSON.stringify(serialize(schema, value))})
+		return true
+	} catch (error) {
+		console.warn(`Error setting storage key "${key}":`, error)
+		return false
+	}
 }

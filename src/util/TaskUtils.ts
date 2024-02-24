@@ -1,15 +1,13 @@
-import {taskModelSchema} from '@/models/Task/Task.schema'
 import {type Task} from '@/models/Task/Task.model'
 import {deserialize, serialize} from 'serializr'
+import {type TaskArrayHolder} from '@/models/TaskArrayHolder/TaskArrayHolder.model'
+import {taskArraySchema} from '@/models/TaskArrayHolder/TaskArrayHolder.schema'
 
 export const taskUtil = {
-	toJson(tasks: Task[]): string {
-		return JSON.stringify(serialize(taskModelSchema, tasks))
+	toJson(tasks: TaskArrayHolder): string {
+		return JSON.stringify(serialize(taskArraySchema, tasks))
 	},
 	fromJson(json: string): Task[] {
-		const parsed = JSON.parse(json) as Array<readonly [string, unknown]>
-		return parsed.map(
-			task => deserialize(taskModelSchema, task),
-		)
+		return deserialize(taskArraySchema, JSON.parse(json)).array
 	},
 }

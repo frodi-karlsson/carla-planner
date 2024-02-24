@@ -4,7 +4,7 @@ import paths from 'vite-tsconfig-paths'
 
 export default defineConfig({
 	test: {
-		include: ['./**/*.unit.ts', './**/*.unit.tsx'],
+		include: ['**/*.unit.ts', '**/*.unit.tsx'],
 		environment: 'jsdom',
 		globals: true,
 		root: './',

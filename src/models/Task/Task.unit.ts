@@ -28,7 +28,7 @@ describe('Task', () => {
 
 	test('Task with no type specific fields throws error', () => {
 		expect(() => {
-			const task = Task.from({
+			Task.from({
 				type: 'single',
 				fields: {
 					id: 'test',

@@ -1,4 +1,3 @@
-import React from 'react'
 import {TimeUnit} from './TimeUnit.model'
 
 describe('TimeUnit', () => {

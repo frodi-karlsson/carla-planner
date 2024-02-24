@@ -1,43 +1,61 @@
-import React, {useCallback, useMemo} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import './CalendarDayTaskArea.scss'
-import {type Task} from '@/models/Task/Task.model'
-import {TimeUnit} from '@/models/TimeUnit/TimeUnit.model'
+import {Task} from '@/models/Task/Task.model'
 import TaskElem from './TaskElem'
 import {useDrop} from 'react-dnd'
-import {useTasks} from '@/hooks/useTasks'
-import moment from 'moment'
 import {type CalendarDayProps} from './CalendarDay'
 import {dropTarget} from './util/task-dnd'
+import {type useTasks} from '@/hooks/useTasks'
 
-type CalendarDayTaskAreaProps = CalendarDayProps
+type CalendarDayTaskAreaProps = CalendarDayProps & {
+	taskContext: ReturnType<typeof useTasks>;
+}
 
-const CalendarDayTaskArea: React.FC<CalendarDayTaskAreaProps> = ({year, month, week, day}) => {
-	const date = useMemo(() => moment().year(year).week(week).day(day).toDate(), [year, week, day])
+const CalendarDayTaskArea: React.FC<CalendarDayTaskAreaProps> = ({year, month, week, day, taskContext}) => {
 	const thisYear = year
 	const thisMonth = month
 	const thisWeek = week
 	const thisDay = day
 
-	const [dbTasks, setTasks] = useTasks()
-	const tasks = useMemo(() => dbTasks?.filter(task => {
-		function handleSingle(task: Task): boolean {
+	const [tasks, setTasks] = useState<Task[]>()
+	const [dbTasks, taskStorage] = taskContext
+
+	const makeSingleFromRecurring = (task: Task): Task => {
+		if (!task.fields.recurringTask) {
+			return task
+		}
+
+		const {id, title, description, startTime, length, color} = task.fields
+		return Task.from({
+			type: 'single',
+			fields: {
+				id: id + thisYear + thisMonth + thisDay,
+				title,
+				description,
+				startTime,
+				length,
+				color,
+				singleTask: {
+					date: `${thisYear}-${thisMonth}-${thisDay}`,
+					parent: task.fields.id,
+				},
+			},
+		})
+	}
+
+	useEffect(() => {
+		const singleTasksToday = dbTasks?.filter(task => {
 			const date = task.fields.singleTask?.date
 			if (!date) {
 				return false
 			}
 
 			const [year, week, day] = date.split('-').map(Number)
-			if (year !== thisYear || week !== thisWeek || day !== thisDay) {
-				return false
-			}
-
-			return true
-		}
-
-		function handleRecurring(task: Task): boolean {
+			return year === thisYear && week === thisWeek && day === thisDay
+		}) ?? []
+		const recurringTasksToday = dbTasks.filter(task => {
 			const recurrenceType = task.fields.recurringTask?.recurrence.type
 			const cancelledFor = task.fields.recurringTask?.recurrence.cancelledFor
-
 			const isCancelledDaily = cancelledFor?.find(({year, month, day}) =>
 				thisYear === year && thisMonth === month && thisDay === day,
 			)
@@ -54,65 +72,34 @@ const CalendarDayTaskArea: React.FC<CalendarDayTaskAreaProps> = ({year, month, w
 				thisYear === year,
 			)
 
-			if (recurrenceType === 'daily') {
-				if (isCancelledDaily) {
-					return false
-				}
+			return (recurrenceType === 'daily' && !isCancelledDaily)
+						|| (recurrenceType === 'workdaily' && !(thisDay > 5 || Boolean(isCancelledDaily)))
+						|| (recurrenceType === 'weekly' && !isCancelledWeekly)
+						|| (recurrenceType === 'monthly' && !isCancelledMonthly)
+						|| (recurrenceType === 'yearly' && !isCancelledYearly)
+		}) ?? []
 
-				return true
-			}
+		const recurringToSingle = recurringTasksToday.filter(task =>
+			!singleTasksToday.find(({fields}) => fields.singleTask?.parent === task.fields.id),
+		).map(makeSingleFromRecurring)
 
-			if (recurrenceType === 'workdaily' && thisDay !== 6 && thisDay !== 7) {
-				if (isCancelledDaily) {
-					return false
-				}
-
-				return true
-			}
-
-			if (recurrenceType === 'weekly' && thisDay === task.fields.recurringTask?.recurrence.day) {
-				if (isCancelledWeekly) {
-					return false
-				}
-
-				return true
-			}
-
-			const currentMonth = date.getMonth()
-			if (recurrenceType === 'monthly' && currentMonth === date.getMonth()) {
-				if (isCancelledMonthly) {
-					return false
-				}
-
-				return true
-			}
-
-			const currentYear = date.getFullYear()
-			if (recurrenceType === 'yearly' && currentYear === date.getFullYear()) {
-				if (isCancelledYearly) {
-					return false
-				}
-
-				return true
-			}
-
-			return false
+		if (recurringToSingle.length) {
+			recurringToSingle.forEach(async task => {
+				taskStorage.addTask(task)
+			})
 		}
 
-		if (task.fields.recurringTask) {
-			return handleRecurring(task)
-		}
+		const newTasks = singleTasksToday.concat(recurringToSingle)
+		setTasks(newTasks)
+	}, [dbTasks])
 
-		return handleSingle(task)
-	}), [dbTasks, date])
-
-	const onDrop = useCallback(dropTarget({day, month, week, year}, dbTasks, setTasks).onDrop, [tasks])
-	const [_, drop] = useDrop<Task, void>(() => ({
+	const onDrop = useCallback(dropTarget(taskContext).onDrop, [tasks])
+	const [, drop] = useDrop<Task, void>(() => ({
 		accept: 'Task',
 		drop: onDrop?.bind(this),
 	}), [tasks])
 
-	const getNumberOfTasksWithSamestartTime = (task: Task, index: number): number => {
+	const getNumberOfTasksWithSamestartTime = (task: Task): number => {
 		const {startTime} = task.fields
 		return tasks?.filter(t => t.fields.startTime.minutes === startTime.minutes).length ?? 0
 	}
@@ -124,14 +111,13 @@ const CalendarDayTaskArea: React.FC<CalendarDayTaskAreaProps> = ({year, month, w
 	}
 
 	return (
-
 		<div className='CalendarDayTaskArea' ref={drop}>
 			{tasks?.map((task, i) => (
 				<TaskElem
 					key={task.fields.id}
 					task={task}
-					widthModifier={getNumberOfTasksWithSamestartTime(task, i)}
-					left={(getNumberOfTasksAfterWithSamestartTime(task, i) * 100 / getNumberOfTasksWithSamestartTime(task, i)) + '%'}
+					widthModifier={getNumberOfTasksWithSamestartTime(task)}
+					left={(getNumberOfTasksAfterWithSamestartTime(task, i) * 100 / getNumberOfTasksWithSamestartTime(task)) + '%'}
 					zIndex={i}
 				/>
 			))}

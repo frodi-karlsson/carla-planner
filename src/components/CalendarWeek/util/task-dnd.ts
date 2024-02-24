@@ -1,9 +1,8 @@
 import {type DragSourceHookSpec, type DropTargetHookSpec} from 'react-dnd'
-import {type Task} from '@/models/Task/Task.model'
-import {type CalendarDayProps} from '../CalendarDay'
+import {Task} from '@/models/Task/Task.model'
 import {TimeUnit} from '@/models/TimeUnit/TimeUnit.model'
-import moment from 'moment'
 import {minuteHeight} from './constants'
+import {type useTasks} from '@/hooks/useTasks'
 
 type DropTargetUtil = {
 	onDrop: NonNullable<DropTargetHookSpec<
@@ -21,57 +20,25 @@ type DragTargetUtil = {
 	>['end']>;
 }
 
-const modifyTaskOnDrop = (
+const modifyTaskOnDrop = async (
 	task: Task,
 	deltaTimeUnit: TimeUnit,
-	dropDay: CalendarDayProps,
-	tasks: Task[],
-): Task[] => {
-	const {year, month, week, day} = dropDay
-	const date = moment().year(year).week(week).day(day).toDate()
-	if (task.fields.recurringTask) {
-		const originalId = task.fields.id
-		const [id] = originalId.split('-')
-
-		const newTask: Task = {
-			type: 'single',
-			fields: {
-				id: `${id}-recurred-${date.toISOString()}`,
-				title: task.fields.title,
-				description: task.fields.description,
-				startTime: TimeUnit.from({
-					minutes: task.fields.startTime.minutes + deltaTimeUnit.minutes,
-				}),
-				length: task.fields.length,
-				color: task.fields.color,
-				singleTask: {
-					date: `${year}-${week}-${day}`,
-				},
-			},
-		}
-
-		task.fields.recurringTask.recurrence?.cancelledFor?.push({
-			day,
-			week,
-			month,
-			year,
-		})
-
-		tasks.push(newTask)
-	} else {
-		task.fields.startTime = TimeUnit.from({
-			minutes: task.fields.startTime.minutes + deltaTimeUnit.minutes,
-		})
-	}
-
-	return tasks
+	taskContext: ReturnType<typeof useTasks>,
+): Promise<void> => {
+	const newTask = Task.from({
+		type: task.type,
+		fields: {
+			...task.fields,
+			startTime: TimeUnit.from({
+				minutes: task.fields.startTime.minutes + deltaTimeUnit.minutes,
+			}),
+		},
+	})
+	const [, taskStorage] = taskContext
+	taskStorage.updateTask(task, newTask)
 }
 
-export const dropTarget = (
-	calDayProps: CalendarDayProps,
-	tasks: Task[],
-	setTasks: (tasks: Task[]) => void,
-): DropTargetUtil => ({
+export const dropTarget = (taskContext: ReturnType<typeof useTasks>): DropTargetUtil => ({
 	onDrop(item, monitor) {
 		console.log('onDrop', item)
 		const diff = monitor.getDifferenceFromInitialOffset()
@@ -85,15 +52,7 @@ export const dropTarget = (
 			minutes: delta / minuteHeight,
 		})
 
-		const newTasks = [...modifyTaskOnDrop(item, deltaTimeUnit, calDayProps, tasks)]
-		const taskIndex = newTasks.findIndex(task => task.fields.id === item.fields.id)
-		if (taskIndex === -1) {
-			return
-		}
-
-		newTasks[taskIndex] = item
-		console.log('after modifyTaskOnDrop', newTasks[taskIndex])
-		setTasks([...tasks])
+		void modifyTaskOnDrop(item, deltaTimeUnit, taskContext)
 	},
 })
 
