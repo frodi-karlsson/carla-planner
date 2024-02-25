@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react'
-import {type Task} from '@/models/Task/Task.model'
+import {type CancelledForItem, type Task} from '@/models/Task/Task.model'
 import './TaskElem.scss'
 import {minuteHeight} from './util/constants'
 import {IonButton, IonChip, IonText} from '@ionic/react'
@@ -9,6 +9,7 @@ import {type CalendarDayProps} from './CalendarDay'
 import {dragSource} from './util/task-dnd'
 import {Modal} from '../Modal/Modal'
 import {type TaskContext} from '@/types/TaskContext'
+import moment from 'moment'
 
 type TaskElemProps = {
 	task: Task;
@@ -41,7 +42,23 @@ const TaskElem: React.FC<TaskElemProps> = ({task, widthModifier, zIndex, left, t
 	}
 
 	const deleteTask = (task: Task) => {
+		if (task.fields.singleTask?.parent) {
+			const [year, week, day] = task.fields.singleTask?.date.split('-').map(Number) ?? []
+			const parentId = task.fields.singleTask.parent
+			const parent = taskContext.get(parentId)
+			if (parent) {
+				const cancelledFor: CancelledForItem = {
+					year,
+					week,
+					day,
+				}
+				parent.fields.recurringTask?.recurrence?.cancelledFor.push(cancelledFor)
+				taskContext.update(parentId, parent)
+			}
+		}
+
 		taskContext.remove(task)
+
 		setShowModal(false)
 	}
 

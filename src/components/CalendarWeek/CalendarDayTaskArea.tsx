@@ -5,15 +5,12 @@ import TaskElem from './TaskElem'
 import {useDrop} from 'react-dnd'
 import {type CalendarDayProps} from './CalendarDay'
 import {dropTarget} from './util/task-dnd'
+import moment from 'moment'
 
 type CalendarDayTaskAreaProps = CalendarDayProps
 
-const CalendarDayTaskArea: React.FC<CalendarDayTaskAreaProps> = ({year, month, week, day, taskContext}) => {
-	const thisYear = year
-	const thisMonth = month
-	const thisWeek = week
-	const thisDay = day
-
+const CalendarDayTaskArea: React.FC<CalendarDayTaskAreaProps> = ({year, week, day, taskContext}) => {
+	const thisDate = moment().isoWeekYear(year).isoWeek(week).isoWeekday(day)
 	const [tasks, setTasks] = useState<Task[]>([])
 	const {current, add} = taskContext
 
@@ -23,17 +20,18 @@ const CalendarDayTaskArea: React.FC<CalendarDayTaskAreaProps> = ({year, month, w
 		}
 
 		const {id, title, description, startTime, length, color} = task.fields
+		const [year, week, day] = (['isoWeekYear', 'isoWeek', 'isoWeekday'] as const).map(k => thisDate[k]())
 		return Task.from({
 			type: 'single',
 			fields: {
-				id: id + thisYear + thisMonth + thisDay,
+				id: `${id}-${year}-${week}-${day}`,
 				title,
 				description,
 				startTime,
 				length,
 				color,
 				singleTask: {
-					date: `${thisYear}-${thisMonth}-${thisDay}`,
+					date: `${year}-${week}-${day}`,
 					parent: task.fields.id,
 				},
 			},
@@ -48,31 +46,57 @@ const CalendarDayTaskArea: React.FC<CalendarDayTaskAreaProps> = ({year, month, w
 			}
 
 			const [year, week, day] = date.split('-').map(Number)
-			return year === thisYear && week === thisWeek && day === thisDay
+			const taskDate = moment().isoWeekYear(year).isoWeek(week).isoWeekday(day)
+			return taskDate.isSame(thisDate, 'day')
 		})
 		const recurringTasksToday = current.filter(task => {
+			const {day} = task.fields.recurringTask?.recurrence ?? {}
 			const recurrenceType = task.fields.recurringTask?.recurrence.type
 			const cancelledFor = task.fields.recurringTask?.recurrence.cancelledFor
-			const isCancelledDaily = cancelledFor?.find(({year, month, day}) =>
-				thisYear === year && thisMonth === month && thisDay === day,
-			)
+			const isCancelledDaily = cancelledFor?.find(({year, week, month, day}) => {
+				let isCancelled = false
+				if (year && week && day) {
+					const cancelledDate = moment().isoWeekYear(year).isoWeek(week).isoWeekday(day)
+					isCancelled = thisDate.isSame(cancelledDate, 'day')
+				} else if (year && month && day) {
+					const cancelledDate = moment().isoWeekYear(year).month(month).date(day)
+					isCancelled = thisDate.isSame(cancelledDate, 'day')
+				}
 
-			const isCancelledWeekly = cancelledFor?.find(({year, week}) =>
-				thisYear === year && thisWeek === week,
-			)
+				return isCancelled
+			})
 
-			const isCancelledMonthly = cancelledFor?.find(({year, month}) =>
-				thisYear === year && thisMonth === month,
-			)
+			const isCancelledWeekly = cancelledFor?.find(({year, week}) => {
+				if (!year || !week) {
+					return false
+				}
 
-			const isCancelledYearly = cancelledFor?.find(({year}) =>
-				thisYear === year,
-			)
+				const cancelledDate = moment().isoWeekYear(year).isoWeek(week)
+				return thisDate.isSame(cancelledDate, 'week')
+			})
+
+			const isCancelledMonthly = cancelledFor?.find(({year, month}) => {
+				if (!year || !month) {
+					return false
+				}
+
+				const cancelledDate = moment().isoWeekYear(year).month(month)
+				return thisDate.isSame(cancelledDate, 'month')
+			})
+
+			const isCancelledYearly = cancelledFor?.find(({year}) => {
+				if (!year) {
+					return false
+				}
+
+				const cancelledDate = moment().isoWeekYear(year)
+				return thisDate.isSame(cancelledDate, 'year')
+			})
 
 			return (recurrenceType === 'daily' && !isCancelledDaily)
-						|| (recurrenceType === 'workdaily' && !(thisDay > 5 || Boolean(isCancelledDaily)))
-						|| (recurrenceType === 'weekly' && !isCancelledWeekly)
-						|| (recurrenceType === 'monthly' && !isCancelledMonthly)
+						|| (recurrenceType === 'workdaily' && !(thisDate.isoWeekday() > 5 || Boolean(isCancelledDaily)))
+						|| (recurrenceType === 'weekly' && !isCancelledWeekly && thisDate.isoWeekday() === (day ? day - 1 : 0))
+						|| (recurrenceType === 'monthly' && !isCancelledMonthly && thisDate.date() === (day ? day - 1 : 0))
 						|| (recurrenceType === 'yearly' && !isCancelledYearly)
 		})
 

@@ -12,8 +12,17 @@ function getFullKey(key: string) {
 	return `${appName}.${key}`
 }
 
-export function useStorage<T>(key: string, schema: ClazzOrModelSchema<T>, id: (v: T) => string): {current: T[]; add: (value: T) => void; remove: (value: T) => void; update: (id: string, value: T) => void} {
+type UseStorageHook<T> = {
+	current: T[];
+	add: (value: T) => void;
+	remove: (value: T) => void;
+	update: (id: string, value: T) => void;
+	get: (id: string) => T | undefined;
+}
+
+export function useStorage<T>(key: string, schema: ClazzOrModelSchema<T>, id: (v: T) => string): UseStorageHook<T> {
 	const [storedValue, setStoredValue] = useState<T[]>([])
+	const latestStorageRef = useRef<T[]>([])
 	const loadedRef = useRef(false)
 
 	const waitForLoad = async () => {
@@ -31,10 +40,15 @@ export function useStorage<T>(key: string, schema: ClazzOrModelSchema<T>, id: (v
 
 	useEffect(() => {
 		void readStorage<T>(key, schema).then(res => {
-			setStoredValue(res)
+			if (res.length) {
+				setStoredValue(res)
+			}
+
 			loadedRef.current = true
 		})
 	}, [])
+
+	const getValue = useCallback((tId: string) => storedValue.find(v => id(v) === tId), [storedValue])
 
 	const addValue = useCallback((value: T) => {
 		void waitForLoad().then(() => {
@@ -62,14 +76,24 @@ export function useStorage<T>(key: string, schema: ClazzOrModelSchema<T>, id: (v
 
 	useEffect(() => {
 		void setStorage(key, storedValue, schema)
+		latestStorageRef.current = storedValue
 	}, [storedValue])
 
-	return {current: storedValue, add: addValue, remove: removeValue, update: updateValue}
+	// Cleanup
+	useEffect(() => {
+		const latestStorage = latestStorageRef.current
+		return () => {
+			void setStorage(key, latestStorage, schema)
+		}
+	}, [])
+
+	return {current: storedValue, add: addValue, remove: removeValue, update: updateValue, get: getValue}
 }
 
 export async function readStorage<T>(key: string, schema: ClazzOrModelSchema<T>): Promise<T[]> {
 	const fromStorage = await getPreferences({key: getFullKey(key)})
 	if (!fromStorage.value) {
+		console.warn('no value')
 		return []
 	}
 

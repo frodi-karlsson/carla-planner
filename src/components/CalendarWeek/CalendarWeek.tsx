@@ -3,6 +3,7 @@ import './CalendarWeek.scss'
 import {IonTitle} from '@ionic/react'
 import CalendarDay from './CalendarDay'
 import {type TaskContext} from '@/types/TaskContext'
+import moment from 'moment'
 
 type CalendarWeekProps = {
 	taskContext: TaskContext;
@@ -11,7 +12,9 @@ type CalendarWeekProps = {
 const CalendarWeek: React.FC<CalendarWeekProps> = ({taskContext}) => {
 	let timeOut: NodeJS.Timeout | undefined
 	const scrollTo = (element: HTMLElement) => {
-		element.scrollIntoView()
+		element.scrollIntoView({
+			behavior: 'smooth',
+		})
 	}
 
 	useEffect(() => {
@@ -39,6 +42,8 @@ const CalendarWeek: React.FC<CalendarWeekProps> = ({taskContext}) => {
 
 		return hourString
 	}
+
+	const testDates = [...new Array(7).keys()].map(i => moment().isoWeekYear(2020).isoWeek(1).isoWeekday(i))
 
 	for (let i = 0; i < 24; i++) {
 		timeTicks.push(
@@ -76,9 +81,9 @@ const CalendarWeek: React.FC<CalendarWeekProps> = ({taskContext}) => {
 					</div>
 					<div className='CalendarWeek__content__days__list'>
 						{
-							days.map((day, index) => (
+							testDates.map((date, index) => (
 								<div key={index} className='CalendarWeek__content__days__list__day'>
-									<CalendarDay taskContext={taskContext} year={2021} month={1} week={1} day={index} />
+									<CalendarDay taskContext={taskContext} year={date.isoWeekYear()} week={date.isoWeek()} day={date.isoWeekday()} />
 								</div>
 							))
 						}

@@ -9,7 +9,7 @@ export type SingleTaskProps = {
    *
    * Week number is according to ISO 8601
    */
-	date: `${number}-${number}-${number}`;
+	date: string;
 	/**
    * The parent recurring task that this single task is made from
    */
@@ -17,7 +17,7 @@ export type SingleTaskProps = {
 }
 
 export class SingleTask implements SingleTaskProps {
-	date: `${number}-${number}-${number}`
+	date: string
 	/**
    * @deprecated Use an object with type SingleTaskProps instead
    * @param props The properties that define the single task

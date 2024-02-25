@@ -32,6 +32,7 @@ import {testTasks} from './util/TestTasks'
 import {type TaskContext} from './types/TaskContext'
 import {useStorage} from './hooks/useStorage'
 import {taskModelSchema} from './models/Task/Task.schema'
+import {type CustomWindow} from './types/CustomWindow'
 
 setupIonicReact()
 
@@ -41,11 +42,16 @@ const App: React.FC = () => {
 		taskModelSchema,
 		t => t.fields.id,
 	)
-	const taskContext = createContext<TaskContext>(taskHook)
+	const taskContext = createContext<TaskContext>(taskHook);
+	(window as unknown as CustomWindow).setTestTasks = () => {
+		testTasks.forEach(task => {
+			taskHook.add(task)
+		})
+	}
 
 	useEffect(() => {
 		testTasks.forEach(task => {
-			taskHook.add(task)
+			// TaskHook.add(task)
 		})
 	}, [])
 
